@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
+import { SongService } from "../../services/api";
 import SongItem from "../SongItem/SongItem";
 import type { Song } from "../../types/models";
 
@@ -12,10 +12,7 @@ export default function SongList() {
   const [songs, setSongs] = useState<Song[]>([]);
 
   useEffect(() => {
-    api
-      .get("/songs")
-      .then((res) => setSongs(res.data))
-      .catch((err) => console.error("API error:", err))
+    SongService.getAll().then(setSongs);
   }, []);
 
   if (songs.length === 0) return <p>No songs found.</p>;

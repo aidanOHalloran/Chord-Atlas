@@ -1,13 +1,14 @@
-import './App.css'
-import SongList from './components/SongList/SongList'
+import { BrowserRouter, Routes, Route } from "react-router-dom"
+import LandingPage from "./pages/LandingPage";
+import SongLibraryPage from "./pages/SongLibraryPage";
 
-function App() {
+export default function App() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>🎸 ChordAtlas</h1>
-      <SongList />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/songs" element={<SongLibraryPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

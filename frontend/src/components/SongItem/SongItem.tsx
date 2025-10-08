@@ -10,7 +10,7 @@ export default function SongItem({ song }: SongItemProps){
         <li>
             {/* Show song name and details */}
             <strong>
-                {song.title} – {song.artist} ({song.song_key})
+                {song.title} - {song.artist} ({song.song_key})
             </strong>
 
             {/* Render the ChordList component */}
