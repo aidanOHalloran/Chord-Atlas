@@ -35,10 +35,11 @@ CREATE TABLE IF NOT EXISTS song_chords (
 
 -- INITIAL CHORDS
 INSERT INTO chords (name, frets, fingers) VALUES
-('C', JSON_ARRAY(0,1,0,2,3,'x'), JSON_ARRAY(0,1,0,2,3,0)),
-('G', JSON_ARRAY(3,3,0,0,2,3), JSON_ARRAY(4,3,0,0,1,2)),
-('Am', JSON_ARRAY(0,1,2,2,0,'x'), JSON_ARRAY(0,1,2,3,0,0)),
-('F', JSON_ARRAY(1,1,2,3,3,1), JSON_ARRAY(1,1,2,3,4,1));
+('C', CAST(JSON_ARRAY(0, 1, 0, 2, 3, "x") AS JSON), CAST(JSON_ARRAY(0, 1, 0, 2, 3, 0) AS JSON)),
+('G', CAST(JSON_ARRAY(3, 3, 0, 0, 2, 3) AS JSON), CAST(JSON_ARRAY(4, 3, 0, 0, 1, 2) AS JSON)),
+('Am', CAST(JSON_ARRAY(0, 1, 2, 2, 0, "x") AS JSON), CAST(JSON_ARRAY(0, 1, 2, 3, 0, 0) AS JSON)),
+('F', CAST(JSON_ARRAY(1, 1, 2, 3, 3, 1) AS JSON), CAST(JSON_ARRAY(1, 1, 2, 3, 4, 1) AS JSON));
+
 
 -- INITIAL SONGS
 INSERT INTO songs (title, artist, song_key, notes)
