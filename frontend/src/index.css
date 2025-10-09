@@ -13,3 +13,9 @@
     @apply px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-medium transition;
   }
 }
+
+@layer components {
+  .card {
+    @apply bg-neutral-900 border border-neutral-800 rounded-xl p-5 transition-all hover:bg-neutral-800 hover:-translate-y-1 shadow-md;
+  }
+}

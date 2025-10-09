@@ -12,20 +12,21 @@ export default function SongList() {
   const [songs, setSongs] = useState<Song[]>([]);
 
   useEffect(() => {
-  SongService.getAll().then((res) => {
-    console.log("🎵 SongService response:", res);
-    setSongs(res);
-  });
-}, []);
+    SongService.getAll().then((res) => {
+      console.log("🎵 SongService response:", res);
+      setSongs(res);
+    });
+  }, []);
 
 
-  if (songs.length === 0) return <p>No songs found.</p>;
+  if (songs.length === 0) return <p className="text-gray-400">No songs found.</p>;
 
   return (
-    <ul>
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {songs.map((song) => (
         <SongItem key={song.id} song={song} />
       ))}
-    </ul>
+    </div>
   );
+
 }
