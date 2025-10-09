@@ -12,8 +12,12 @@ export default function SongList() {
   const [songs, setSongs] = useState<Song[]>([]);
 
   useEffect(() => {
-    SongService.getAll().then(setSongs);
-  }, []);
+  SongService.getAll().then((res) => {
+    console.log("🎵 SongService response:", res);
+    setSongs(res);
+  });
+}, []);
+
 
   if (songs.length === 0) return <p>No songs found.</p>;
 

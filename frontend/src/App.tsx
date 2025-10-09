@@ -1,14 +1,25 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
+import Container from "./components/layout/Container";
 import LandingPage from "./pages/LandingPage";
 import SongLibraryPage from "./pages/SongLibraryPage";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/songs" element={<SongLibraryPage />} />
-      </Routes>
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <main className="flex-grow">
+          <Container>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/songs" element={<SongLibraryPage />} />
+            </Routes>
+          </Container>
+        </main>
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }
