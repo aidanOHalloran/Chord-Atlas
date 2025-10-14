@@ -1,7 +1,12 @@
+import { useState } from "react";
 import SongList from "../components/SongList/SongList";
 import { Link } from "react-router-dom";
+import AddSongForm from "../components/AddSongForm/AddSongForm";
+
 
 export default function SongLibraryPage() {
+  const [refresh, setRefresh] = useState(0);
+
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
@@ -14,7 +19,10 @@ export default function SongLibraryPage() {
         </Link>
       </div>
 
-      <SongList />
+        {/* Form to add new songs */}
+      <AddSongForm onAdded={() => setRefresh((r) => r + 1)} />
+        {/* Key change forces remount and data refresh */}
+      <SongList key={refresh} />
     </div>
   );
 }

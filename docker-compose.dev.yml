@@ -21,7 +21,7 @@ services:
     command: sh -c "npm install && npm run dev"
     volumes:
       - ./backend:/app
-      - /app/node_modules  # prevents overwriting installed modules
+      - /app/node_modules
     ports:
       - "5000:5000"
     environment:
@@ -46,7 +46,7 @@ services:
       - "5173:5173"
     environment:
       NODE_ENV: development
-      VITE_API_BASE_URL: http://localhost:5000/api
+      VITE_API_BASE_URL: http://backend:5000/api
     depends_on:
       - backend
 

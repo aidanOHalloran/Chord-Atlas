@@ -2,7 +2,7 @@ import axios from "axios";
 import type { Song, Chord } from "../types/models";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: "/api", // let Vite handle the proxy
 });
 
 // Example: typed API calls
@@ -11,6 +11,23 @@ export const SongService = {
     const res = await api.get<Song[]>("/songs");
     return res.data;
   },
+
+  async create(songData: {
+    title: string;
+    artist: string;
+    song_key?: string;
+    notes?: string;
+    chords?: string[];
+  }) {
+    const res = await fetch("/api/songs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(songData),
+    });
+
+    if (!res.ok) throw new Error("Failed to create song");
+    return res.json();
+  },  
 };
 
 export const ChordService = {
