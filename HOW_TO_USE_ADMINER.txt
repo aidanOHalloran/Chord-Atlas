@@ -1,0 +1,12 @@
+Adminer is a database client image used to easily view and interact with the overall docker stacks database.
+
+When the application is running, go to localhost:8080 then log in with:
+
+System	MySQL
+Server	db (inside Docker) or localhost (either works)
+Username	root
+Password	rootpass
+Database	chordatlas
+
+You’ll see your chords, songs, and song_chords tables right in the browser.
+You can browse, edit, run SQL, export/import, etc.

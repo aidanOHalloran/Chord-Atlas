@@ -37,3 +37,36 @@ export const getAllChords = async (_: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch chords" });
   }
 };
+
+/**
+ * @desc Create a new chord (for AddChord form)
+ * @route POST /api/chords
+ */
+export const createChord = async (req: Request, res: Response) => {
+  try {
+    const { name, frets, fingers, position, variation } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ error: "Chord name is required" });
+    }
+
+    // Check if it already exists
+    const exists = await Chord.findOne({ where: { name } });
+    if (exists) {
+      return res.status(409).json({ error: "Chord already exists" });
+    }
+
+    const chord = await Chord.create({
+      name,
+      frets: JSON.stringify(frets),
+      fingers: JSON.stringify(fingers),
+      position: position ?? 0,
+      variation: variation ?? 1,
+    });
+
+    res.status(201).json(chord);
+  } catch (err) {
+    console.error("❌ Error creating chord:", err);
+    res.status(500).json({ error: "Failed to create chord" });
+  }
+};

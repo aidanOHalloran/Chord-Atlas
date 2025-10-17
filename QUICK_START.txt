@@ -1,0 +1,11 @@
+🚀 Run Commands 🚀
+
+Production:
+docker compose up -d --build
+
+
+Development:
+docker compose -f docker-compose.dev.yml up
+
+
+Then visit → http://localhost:8080

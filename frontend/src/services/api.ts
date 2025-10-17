@@ -2,10 +2,10 @@ import axios from "axios";
 import type { Song, Chord } from "../types/models";
 
 const api = axios.create({
-  baseURL: "/api", // let Vite handle the proxy
+  baseURL: "/api", // let Vite proxy handle the backend URL
 });
 
-// Example: typed API calls
+// 🎵 Song API -----------------------------------------------------
 export const SongService = {
   async getAll(): Promise<Song[]> {
     const res = await api.get<Song[]>("/songs");
@@ -17,22 +17,28 @@ export const SongService = {
     artist: string;
     song_key?: string;
     notes?: string;
-    chords?: string[];
-  }) {
-    const res = await fetch("/api/songs", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(songData),
-    });
-
-    if (!res.ok) throw new Error("Failed to create song");
-    return res.json();
-  },  
+    chordIds?: number[]; // 👈 matches backend relationship
+  }): Promise<Song> {
+    const res = await api.post<Song>("/songs", songData);
+    return res.data;
+  },
 };
 
+// 🎸 Chord API -----------------------------------------------------
 export const ChordService = {
   async getAll(): Promise<Chord[]> {
     const res = await api.get<Chord[]>("/chords");
+    return res.data;
+  },
+
+  async create(chordData: {
+    name: string;
+    frets: number[];
+    fingers: number[];
+    position?: number;
+    variation?: number;
+  }): Promise<Chord> {
+    const res = await api.post<Chord>("/chords", chordData);
     return res.data;
   },
 };
