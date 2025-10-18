@@ -7,7 +7,7 @@ import toast from "react-hot-toast";
 export default function AddChordForm({ onAdded }: { onAdded?: () => void }) {
   const [name, setName] = useState("");
   const [frets, setFrets] = useState<number[]>([0, 0, 0, 0, 0, 0]);
-  const [fingers, setFingers] = useState<number[]>([0, 0, 0, 0, 0, 0]);
+  const [fingers, setFingers] = useState<(number | null)[]>([0, 0, 0, 0, 0, 0]);
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,9 +51,9 @@ export default function AddChordForm({ onAdded }: { onAdded?: () => void }) {
       <FretboardEditor
         frets={frets}
         fingers={fingers}
-        onChange={(f, fi) => {
-          setFrets(f);
-          setFingers(fi);
+        onChange={(newFrets, newFingers) => {
+          setFrets(newFrets);
+          setFingers(newFingers);
         }}
       />
 

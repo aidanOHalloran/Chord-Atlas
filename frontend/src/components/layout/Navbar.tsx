@@ -10,6 +10,7 @@ export default function Navbar() {
         <div className="space-x-4">
           <Link to="/" className="hover:text-blue-300">Home</Link>
           <Link to="/songs" className="hover:text-blue-300">Library</Link>
+          <Link to="/chords" className="hover:text-blue-300">Chords</Link>
         </div>
       </div>
     </nav>

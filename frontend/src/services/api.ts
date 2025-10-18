@@ -34,7 +34,7 @@ export const ChordService = {
   async create(chordData: {
     name: string;
     frets: number[];
-    fingers: number[];
+    fingers: (number | null)[];
     position?: number;
     variation?: number;
   }): Promise<Chord> {
