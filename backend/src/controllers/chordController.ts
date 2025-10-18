@@ -58,8 +58,8 @@ export const createChord = async (req: Request, res: Response) => {
 
     const chord = await Chord.create({
       name,
-      frets: JSON.stringify(frets),
-      fingers: JSON.stringify(fingers),
+      frets,
+      fingers,
       position: position ?? 0,
       variation: variation ?? 1,
     });

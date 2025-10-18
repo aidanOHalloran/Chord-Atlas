@@ -53,32 +53,47 @@ export default function FretboardEditor({ frets, fingers, onChange }: Props) {
    */
   const handleFretClick = (stringIndex: number, fret: number) => {
     const actualIndex = strings - 1 - stringIndex;
-    const currentFret = frets[actualIndex];
-    const currentFinger = fingers[actualIndex];
 
+    // clone fresh copies
     const newFrets = [...frets];
     const newFingers = [...fingers];
 
     let cycled = false;
 
-    if (currentFret !== fret) {
+    // pull current values directly from clones
+    const currentFret = newFrets[actualIndex] ?? 0;
+    const currentFinger = newFingers[actualIndex];
+
+    // 🎸 CASE 1: empty → add note, finger 1
+    if (currentFret === 0) {
       newFrets[actualIndex] = fret;
       newFingers[actualIndex] = 1;
-    } else {
-      if (currentFinger == null) {
+    }
+
+    // 🎸 CASE 2: same fret clicked again → cycle fingers
+    else if (currentFret === fret) {
+      if (currentFinger == null || currentFinger === 0) {
         newFingers[actualIndex] = 1;
       } else if (currentFinger < 4) {
-        newFingers[actualIndex] = (currentFinger ?? 0) + 1;
+        newFingers[actualIndex] = currentFinger + 1;
       } else {
+        // after 4 → clear
         newFrets[actualIndex] = 0;
         newFingers[actualIndex] = null;
-        cycled = true; // 🔹 Used to trigger pulse animation
+        cycled = true;
       }
     }
 
-    onChange(newFrets, newFingers);
+    // 🎸 CASE 3: moved to new fret → set new note, finger 1
+    else {
+      newFrets[actualIndex] = fret;
+      newFingers[actualIndex] = 1;
+    }
 
-    // Trigger pulse effect when cycling or clearing
+    // apply immediately
+    onChange([...newFrets], [...newFingers]);
+
+    // simple pulse feedback
     setPulseIndex(actualIndex);
     setTimeout(() => setPulseIndex(null), cycled ? 400 : 200);
   };
@@ -163,10 +178,9 @@ export default function FretboardEditor({ frets, fingers, onChange }: Props) {
                         ease: "easeOut",
                       }}
                       className={`w-6 h-6 flex items-center justify-center rounded-full border mb-1 text-[11px] cursor-pointer transition
-                        ${
-                          active
-                            ? "bg-blue-600 border-blue-400 text-white"
-                            : "bg-neutral-800 border-neutral-700 hover:border-blue-500"
+                        ${active
+                          ? "bg-blue-600 border-blue-400 text-white"
+                          : "bg-neutral-800 border-neutral-700 hover:border-blue-500"
                         }`}
                     >
                       {active ? finger ?? fretNum : ""}
