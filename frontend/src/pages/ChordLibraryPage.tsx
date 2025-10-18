@@ -2,24 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AddChordForm from "../components/AddChordForm/AddChordForm";
 import ChordCard from "../components/Chords/ChordCard/ChordCard";
-
-interface Chord {
-  id: number;
-  name: string;
-  frets: number[];
-  fingers: (number | null)[];
-  position?: number;
-  variation?: number;
-}
+import type { Chord } from "../types/models";
 
 export default function ChordLibraryPage() {
   const [chords, setChords] = useState<Chord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false); // 👈 collapse toggle
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
-  // 🪄 Fetch all chords
   const fetchChords = async () => {
     try {
       setLoading(true);
@@ -33,20 +25,20 @@ export default function ChordLibraryPage() {
     }
   };
 
-  // 🔁 Load once
   useEffect(() => {
     fetchChords();
   }, []);
 
-  const handleChordAdded = () => {
-    fetchChords();
+  const handleChordAdded = async () => {
+    await fetchChords();
+    setShowForm(false); // collapse after adding
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this chord?")) return;
     try {
       await axios.delete(`${API_BASE}/chords/${id}`);
-      setChords(chords.filter(c => c.id !== id));
+      setChords(chords.filter((c) => c.id !== id));
     } catch (err) {
       console.error("❌ Failed to delete chord:", err);
     }
@@ -56,13 +48,32 @@ export default function ChordLibraryPage() {
     <div className="p-8 text-gray-200">
       <h1 className="text-3xl font-bold mb-6 text-center">🎸 Chord Library</h1>
 
-      {/* ➕ Add new chord */}
-      <div className="max-w-2xl mx-auto mb-10 bg-neutral-900 p-6 rounded-xl shadow-lg border border-neutral-700">
-        <h2 className="text-xl font-semibold mb-4">Add New Chord</h2>
-        <AddChordForm onAdded={handleChordAdded} />
+      {/* 🧩 Collapsible Add Chord Form */}
+      <div className="max-w-2xl mx-auto mb-10 bg-neutral-900 rounded-xl border border-neutral-800 shadow-md overflow-hidden">
+        <button
+          onClick={() => setShowForm((prev) => !prev)}
+          className="w-full flex justify-between items-center p-4 text-left hover:bg-neutral-800 transition"
+        >
+          <h2 className="text-blue-400 text-lg font-semibold flex items-center gap-2">
+            {showForm ? "▼" : "▶"} Add New Chord
+          </h2>
+          <span className="text-gray-400 text-sm">
+            {showForm ? "Click to hide" : "Click to expand"}
+          </span>
+        </button>
+
+        <div
+          className={`transition-all duration-500 ease-in-out ${
+            showForm
+              ? "max-h-[1200px] opacity-100 p-5 border-t border-neutral-800"
+              : "max-h-0 opacity-0"
+          } overflow-hidden`}
+        >
+          <AddChordForm onAdded={handleChordAdded} />
+        </div>
       </div>
 
-      {/* 🎶 Chord grid */}
+      {/* 🎶 Chord Grid */}
       {loading ? (
         <p className="text-center text-gray-400">Loading chords...</p>
       ) : error ? (
@@ -71,7 +82,7 @@ export default function ChordLibraryPage() {
         <p className="text-center text-gray-400">No chords yet. Add one above!</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {chords.map(chord => (
+          {chords.map((chord) => (
             <ChordCard key={chord.id} chord={chord} onDelete={handleDelete} />
           ))}
         </div>

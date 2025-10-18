@@ -38,6 +38,27 @@ export const getAllChords = async (_: Request, res: Response) => {
   }
 };
 
+// @desc    Get a single chord by ID
+// @route   GET /api/chords/:id
+export const getChordById = async (req: Request, res: Response) => {
+  try {
+    const chord = await Chord.findByPk(req.params.id);
+    if (!chord) {
+      return res.status(404).json({ error: "Chord not found" });
+    }
+
+    const plain = chord.get({ plain: true });
+    res.json({
+      ...plain,
+      frets: safeParse(plain.frets),
+      fingers: safeParse(plain.fingers),
+    });
+  } catch (err) {
+    console.error("❌ Error fetching chord by ID:", err);
+    res.status(500).json({ error: "Failed to fetch chord" });
+  }
+};
+
 /**
  * @desc Create a new chord (for AddChord form)
  * @route POST /api/chords

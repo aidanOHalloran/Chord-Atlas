@@ -7,6 +7,7 @@ export interface Chord {
   fingers?: (number | string | null)[];
   position?: number;
   variation?: number;
+  notes?: string;
 }
 
 export interface Song {
