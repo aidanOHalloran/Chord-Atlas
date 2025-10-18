@@ -4,7 +4,9 @@ export interface Chord {
   id: number;
   name: string;
   frets?: (number | string)[];
-  fingers?: (number | string)[];
+  fingers?: (number | string | null)[];
+  position?: number;
+  variation?: number;
 }
 
 export interface Song {

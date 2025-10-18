@@ -5,6 +5,7 @@ import Container from "./components/layout/Container";
 import LandingPage from "./pages/LandingPage";
 import SongLibraryPage from "./pages/SongLibraryPage";
 import SongDetailPage from "./pages/SongDetailPage";
+import ChordLibraryPage from "./pages/ChordLibraryPage";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/songs" element={<SongLibraryPage />} />
               <Route path="/songs/:id" element={<SongDetailPage />} />
+              <Route path="/chords" element={<ChordLibraryPage />} />
             </Routes>
           </Container>
         </main>

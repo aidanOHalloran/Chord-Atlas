@@ -1,7 +1,7 @@
 // frontend/src/components/AddChordForm/AddChordForm.tsx
 import { useState } from "react";
 import { ChordService } from "../../services/api";
-import FretboardEditor from "./FretboardEditor";
+import FretboardEditor from "../Fretboard/FretboardEditor";
 import toast from "react-hot-toast";
 
 export default function AddChordForm({ onAdded }: { onAdded?: () => void }) {

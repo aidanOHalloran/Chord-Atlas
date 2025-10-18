@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SongService } from "../services/api";
 import type { Song } from "../types/models";
-import ChordList from "../components/ChordList/ChordList";
+import ChordList from "../components/Chords/ChordList/ChordList";
 
 export default function SongDetailPage() {
   const { id } = useParams();

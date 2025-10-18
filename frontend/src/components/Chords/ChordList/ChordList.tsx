@@ -1,4 +1,4 @@
-import type { Chord } from "../../types/models";
+import type { Chord } from "../../../types/models";
 
 interface ChordListProps {
   chords: Chord[];
