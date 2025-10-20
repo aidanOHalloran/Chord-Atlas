@@ -43,14 +43,11 @@ services:
     container_name: chordatlas-frontend
     restart: unless-stopped
     working_dir: /app
-    command: ["npm", "run", "build"]
     environment:
       NODE_ENV: production
       VITE_API_BASE_URL: /api
     depends_on:
       - backend
-    volumes:
-      - ./frontend/dist:/app/dist  # only if building locally
 
   nginx:
     image: nginx:latest
