@@ -8,7 +8,7 @@ interface SongItemProps {
 export default function SongItem({ song }: SongItemProps) {
   return (
     <Link
-      to={`/songs/${song.id}`}
+      to={`/songs/${song.id}`} // Link to the song details page
       className="block bg-neutral-900 p-4 rounded-xl shadow-md border border-neutral-700 hover:border-blue-500 hover:shadow-lg transition transform hover:-translate-y-1"
     >
       <div className="mb-3">
