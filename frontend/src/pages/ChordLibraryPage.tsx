@@ -8,7 +8,7 @@ export default function ChordLibraryPage() {
   const [chords, setChords] = useState<Chord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false); // 👈 collapse toggle
+  const [showForm, setShowForm] = useState(false);
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -31,7 +31,7 @@ export default function ChordLibraryPage() {
 
   const handleChordAdded = async () => {
     await fetchChords();
-    setShowForm(false); // collapse after adding
+    setShowForm(false);
   };
 
   const handleDelete = async (id: number) => {
@@ -45,19 +45,27 @@ export default function ChordLibraryPage() {
   };
 
   return (
-    <div className="p-8 text-gray-200">
-      <h1 className="text-3xl font-bold mb-6 text-center">🎸 Chord Library</h1>
+    <div className="p-8 text-gray-200 max-w-6xl mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-semibold text-blue-400">🎸 Chord Library</h1>
+        <a
+          href="/"
+          className="text-sm text-white-400 hover:text-blue-400 transition"
+        >
+          ← Back to Home
+        </a>
+      </div>
 
-      {/* 🧩 Collapsible Add Chord Form */}
-      <div className="max-w-2xl mx-auto mb-10 bg-neutral-900 rounded-xl border border-neutral-800 shadow-md overflow-hidden">
+      {/* Collapsible Add Form */}
+      <div className="mb-8 bg-neutral-900 rounded-xl border border-neutral-800 shadow-md overflow-hidden">
         <button
           onClick={() => setShowForm((prev) => !prev)}
           className="w-full flex justify-between items-center p-4 text-left hover:bg-neutral-800 transition"
         >
-          <h2 className="text-blue-400 text-lg font-semibold flex items-center gap-2">
+          <h2 className="text-white-400 text-lg font-semibold flex items-center gap-2">
             {showForm ? "▼" : "▶"} Add New Chord
           </h2>
-          <span className="text-gray-400 text-sm">
+          <span className="text-white-400 text-sm">
             {showForm ? "Click to hide" : "Click to expand"}
           </span>
         </button>
@@ -73,7 +81,7 @@ export default function ChordLibraryPage() {
         </div>
       </div>
 
-      {/* 🎶 Chord Grid */}
+      {/* Chord Grid */}
       {loading ? (
         <p className="text-center text-gray-400">Loading chords...</p>
       ) : error ? (

@@ -3,10 +3,13 @@ import { useEffect, useState } from "react";
 import { SongService } from "../services/api";
 import type { Song } from "../types/models";
 import ChordList from "../components/Chords/ChordList/ChordList";
+import EditSongModal from "../components/EditSongModal/EditSongModal";
 
 export default function SongDetailPage() {
   const { id } = useParams();
   const [song, setSong] = useState<Song | null>(null);
+  const [showEdit, setShowEdit] = useState(false);
+
 
   useEffect(() => {
     if (id) {
@@ -38,6 +41,29 @@ export default function SongDetailPage() {
           <p className="text-gray-400">{song.notes}</p>
         </>
       )}
+
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-4xl font-bold text-blue-400">{song.title}</h1>
+        <button
+          onClick={() => setShowEdit(true)}
+          className="bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+        >
+          ✏️ Edit
+        </button>
+      </div>
+      {showEdit && (
+        <EditSongModal
+          song={song}
+          onClose={() => setShowEdit(false)}
+          onUpdated={async () => {
+            const updated = await SongService.getById(song.id);
+            setSong(updated);
+          }}
+        />
+      )}
+
     </div>
+
+
   );
 }

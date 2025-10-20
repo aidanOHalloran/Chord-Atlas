@@ -12,19 +12,16 @@ export default function FretboardEditor({ frets, fingers, onChange }: Props) {
   const strings = 6;
   const maxFrets = 5;
   const [autoAssign, setAutoAssign] = useState(true);
-  const [pulseIndex, setPulseIndex] = useState<number | null>(null); // 🔹 Track recent change
+  const [pulseIndex, setPulseIndex] = useState<number | null>(null);
 
   // 🎵 Standard tuning
-  const currentTuning = allTunings["Standard (EADGBE)"].notes;
-  const stringTooltips = getStringTooltips(currentTuning);
+  const tuning = allTunings["Standard (EADGBE)"].notes;
+  const tooltips = getStringTooltips(tuning);
 
-  // Reverse for correct display (high E → right)
-  const reversedNotes = [...currentTuning].reverse();
-  const reversedTips = [...stringTooltips].reverse();
-  const reversedFrets = [...frets].reverse();
-  const reversedFingers = [...fingers].reverse();
+  const notes = tuning;
+  const tips = tooltips;
 
-  // 🧮 Auto finger suggestion
+  // 🧮 Auto finger suggestion (still applies automatically)
   useEffect(() => {
     if (!autoAssign) return;
     const activeFrets = frets.filter((f) => f > 0);
@@ -43,63 +40,62 @@ export default function FretboardEditor({ frets, fingers, onChange }: Props) {
     });
 
     onChange(frets, newFingers);
-  }, [frets]);
+  }, [frets, autoAssign]);
 
   /**
    * 🔄 Click logic:
    * - Click empty fret → add note (finger 1)
-   * - Click again → cycle fingers 1→2→3→4
-   * - After 4 → clear note
+   * - Click same fret again → clear (even if Auto Assign is ON)
+   * - Manual mode only: cycle fingers 1→2→3→4→clear
    */
   const handleFretClick = (stringIndex: number, fret: number) => {
-    const actualIndex = strings - 1 - stringIndex;
+  const i = stringIndex; // no inversion
+  const newFrets = [...frets];
+  const newFingers = [...fingers];
 
-    // clone fresh copies
-    const newFrets = [...frets];
-    const newFingers = [...fingers];
+  const currentFret = newFrets[i] ?? 0;
+  const currentFinger = newFingers[i];
 
-    let cycled = false;
+  let didPulseClear = false;
 
-    // pull current values directly from clones
-    const currentFret = newFrets[actualIndex] ?? 0;
-    const currentFinger = newFingers[actualIndex];
-
-    // 🎸 CASE 1: empty → add note, finger 1
-    if (currentFret === 0) {
-      newFrets[actualIndex] = fret;
-      newFingers[actualIndex] = 1;
-    }
-
-    // 🎸 CASE 2: same fret clicked again → cycle fingers
-    else if (currentFret === fret) {
+  if (currentFret === fret) {
+    // Clicking the SAME fret again
+    if (autoAssign) {
+      // Auto mode: toggle OFF
+      newFrets[i] = 0;
+      newFingers[i] = null;
+      didPulseClear = true;
+    } else {
+      // Manual mode: cycle 1→2→3→4→clear
       if (currentFinger == null || currentFinger === 0) {
-        newFingers[actualIndex] = 1;
+        newFingers[i] = 1;
       } else if (currentFinger < 4) {
-        newFingers[actualIndex] = currentFinger + 1;
+        newFingers[i] = currentFinger + 1;
       } else {
-        // after 4 → clear
-        newFrets[actualIndex] = 0;
-        newFingers[actualIndex] = null;
-        cycled = true;
+        newFrets[i] = 0;
+        newFingers[i] = null;
+        didPulseClear = true;
       }
     }
+  } else if (currentFret === 0) {
+    // Empty string → place note
+    newFrets[i] = fret;
+    newFingers[i] = 1; // start at 1 (autoAssign effect may refine later)
+  } else {
+    // Moving to a different fret on this string
+    newFrets[i] = fret;
+    newFingers[i] = 1;
+  }
 
-    // 🎸 CASE 3: moved to new fret → set new note, finger 1
-    else {
-      newFrets[actualIndex] = fret;
-      newFingers[actualIndex] = 1;
-    }
+  onChange(newFrets, newFingers);
 
-    // apply immediately
-    onChange([...newFrets], [...newFingers]);
+  setPulseIndex(i);
+  setTimeout(() => setPulseIndex(null), didPulseClear ? 400 : 200);
+};
 
-    // simple pulse feedback
-    setPulseIndex(actualIndex);
-    setTimeout(() => setPulseIndex(null), cycled ? 400 : 200);
-  };
 
   const toggleMute = (stringIndex: number) => {
-    const actualIndex = strings - 1 - stringIndex;
+    const actualIndex = stringIndex;
     const newFrets = [...frets];
     newFrets[actualIndex] = newFrets[actualIndex] === -1 ? 0 : -1;
     onChange(newFrets, fingers);
@@ -134,15 +130,15 @@ export default function FretboardEditor({ frets, fingers, onChange }: Props) {
           ))}
         </div>
 
-        {/* Strings + frets */}
+        {/* Strings */}
         <div className="grid grid-cols-6 gap-2">
           {Array.from({ length: strings }).map((_, stringIndex) => {
-            const fret = reversedFrets[stringIndex];
-            const finger = reversedFingers[stringIndex];
+            const fret = frets[stringIndex];
+            const finger = fingers[stringIndex];
             const isMuted = fret === -1;
             const isOpen = fret === 0;
-            const note = reversedNotes[stringIndex];
-            const tooltip = reversedTips[stringIndex];
+            const note = notes[stringIndex];
+            const tooltip = tips[stringIndex];
 
             return (
               <div key={stringIndex} className="flex flex-col items-center group">
@@ -154,14 +150,14 @@ export default function FretboardEditor({ frets, fingers, onChange }: Props) {
                   {note}
                 </span>
 
-                {/* Nut (top bar) */}
+                {/* Nut */}
                 <div className="w-6 h-[2px] bg-neutral-600 mb-1 rounded" />
 
                 {/* Frets */}
                 {Array.from({ length: maxFrets }).map((_, fretIndex) => {
                   const fretNum = fretIndex + 1;
                   const active = fret === fretNum;
-                  const isPulsing = pulseIndex === strings - 1 - stringIndex;
+                  const isPulsing = pulseIndex === stringIndex;
 
                   return (
                     <motion.div
@@ -203,7 +199,7 @@ export default function FretboardEditor({ frets, fingers, onChange }: Props) {
       </div>
 
       <p className="text-sm text-gray-400 mt-4 italic text-center">
-        💡 Click frets to toggle or cycle fingers (1–4). Hover string labels for tuning info.
+        💡 Click frets to toggle on/off. In manual mode, repeated clicks cycle fingers (1–4).
       </p>
     </div>
   );

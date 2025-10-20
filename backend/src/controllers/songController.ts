@@ -34,11 +34,11 @@ export const getAllSongs = async (_: Request, res: Response) => {
     // Convert Sequelize models → plain objects & parse JSON
     const parsed = songs.map(song => {
       const plainSong = song.get({ plain: true });
-      plainSong.Chords = plainSong.Chords.map((chord: any) => ({
-  ...chord,
-  frets: safeParse(chord.frets),
-  fingers: safeParse(chord.fingers),
-}));
+      plainSong.Chords = (plainSong.Chords || []).map((chord: any) => ({
+        ...chord,
+        frets: safeParse(chord.frets),
+        fingers: safeParse(chord.fingers),
+      }));
       return plainSong;
     });
 
@@ -49,54 +49,57 @@ export const getAllSongs = async (_: Request, res: Response) => {
   }
 };
 
-// ✅ POST /api/songs — Create new song + add missing chords
+
+// @desc    Get song by ID with chords
+// @route   GET /api/songs/:id
+export const getSongById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const song = await Song.findByPk(id, {
+      include: [
+        {
+          model: Chord,
+          attributes: ["id", "name", "frets", "fingers"],
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    if (!song) return res.status(404).json({ error: "Song not found" });
+
+    // Parse JSON-encoded frets/fingers
+    const parsed = song.get({ plain: true });
+    parsed.Chords = parsed.Chords.map((ch: any) => ({
+      ...ch,
+      frets: safeParse(ch.frets),
+      fingers: safeParse(ch.fingers),
+    }));
+
+    res.json(parsed);
+  } catch (err) {
+    console.error("❌ Error fetching song by ID:", err);
+    res.status(500).json({ error: "Failed to fetch song" });
+  }
+};
+
+
 export const createSong = async (req: Request, res: Response) => {
   try {
-    const { title, artist, song_key, notes, chords } = req.body;
+    const { title, artist, song_key, notes, chordIds } = req.body;
 
     if (!title || !artist) {
       return res.status(400).json({ error: "Title and artist are required" });
     }
 
-    // Ensure chords is an array (can be optional)
-    const chordNames = Array.isArray(chords) ? chords : [];
-
-    // 1️⃣ Find existing chords
-    const existingChords = chordNames.length
-      ? await Chord.findAll({ where: { name: { [Op.in]: chordNames } } })
-      : [];
-    const existingNames = existingChords.map((c) => c.name);
-
-    // 2️⃣ Identify and prepare new chords
-    const newChords = chordNames
-      .filter((name) => !existingNames.includes(name))
-      .map((name) => ({
-        name,
-        frets: JSON.stringify([]),
-        fingers: JSON.stringify([]),
-        position: 0,
-        variation: 1,
-      }));
-
-    // 3️⃣ Bulk insert missing chords
-    if (newChords.length > 0) {
-      await Chord.bulkCreate(newChords);
-    }
-
-    // 4️⃣ Re-fetch all chords (existing + newly added)
-    const allChords = chordNames.length
-      ? await Chord.findAll({ where: { name: { [Op.in]: chordNames } } })
-      : [];
-
-    // 5️⃣ Create the new song
+    // Create song
     const song = await Song.create({ title, artist, song_key, notes });
 
-    // 6️⃣ Associate chords with the song (if any)
-    if (allChords.length > 0) {
-      await song.set("Chords", allChords);
+    // Associate existing chords by ID
+    if (Array.isArray(chordIds) && chordIds.length > 0) {
+      const chords = await Chord.findAll({ where: { id: chordIds } });
+      await song.setChords(chords); // ✅ typed correctly now
     }
 
-    // 7️⃣ Return the created song with chords included
     const result = await Song.findByPk(song.id, {
       include: [{ model: Chord, attributes: ["id", "name", "frets", "fingers"] }],
     });
@@ -107,3 +110,59 @@ export const createSong = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to create song" });
   }
 };
+
+
+// @desc    Update an existing song and its chords
+// @route   PUT /api/songs/:id
+export const updateSong = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, artist, song_key, notes, chordIds } = req.body;
+
+    // Validate inputs
+    const song = await Song.findByPk(id);
+    if (!song) return res.status(404).json({ error: "Song not found" });
+
+    // Update basic fields
+    await song.update({ title, artist, song_key, notes });
+
+    // ✅ Update chord associations (if provided)
+    if (Array.isArray(chordIds)) {
+      const chords = await Chord.findAll({ where: { id: chordIds } });
+      await song.setChords(chords);
+    }
+
+    // Fetch updated with chords
+    const updatedSong = await Song.findByPk(id, {
+      include: [
+        {
+          model: Chord,
+          attributes: ["id", "name", "frets", "fingers"],
+          through: { attributes: [] },
+        },
+      ],
+    });
+
+    res.json(updatedSong);
+  } catch (err) {
+    console.error("❌ Error updating song:", err);
+    res.status(500).json({ error: "Failed to update song" });
+  }
+};
+
+// @desc    Delete a song by ID
+// @route   DELETE /api/songs/:id
+export const deleteSong = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const song = await Song.findByPk(id);
+    if (!song) return res.status(404).json({ error: "Song not found" });
+
+    await song.destroy();
+    res.json({ message: `Song ${id} deleted` });
+  } catch (err) {
+    console.error("❌ Error deleting song:", err);
+    res.status(500).json({ error: "Failed to delete song" });
+  }
+};
+

@@ -1,3 +1,5 @@
+// frontend/src/services/api.ts
+
 import axios from "axios";
 import type { Song, Chord } from "../types/models";
 
@@ -12,17 +14,32 @@ export const SongService = {
     return res.data;
   },
 
+  async getById(id: number): Promise<Song> {
+    const res = await api.get<Song>(`/songs/${id}`);
+    return res.data;
+  },
+
   async create(songData: {
     title: string;
     artist: string;
     song_key?: string;
     notes?: string;
-    chordIds?: number[]; // 👈 matches backend relationship
+    chordIds?: number[];
   }): Promise<Song> {
     const res = await api.post<Song>("/songs", songData);
     return res.data;
   },
+
+  async update(id: number, songData: Partial<Song> & { chordIds?: number[] }): Promise<Song> {
+    const res = await api.put<Song>(`/songs/${id}`, songData);
+    return res.data;
+  },
+
+  async delete(id: number): Promise<void> {
+    await api.delete(`/songs/${id}`);
+  },
 };
+
 
 // 🎸 Chord API -----------------------------------------------------
 export const ChordService = {

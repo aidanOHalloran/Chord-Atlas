@@ -13,32 +13,34 @@ export default function SongList({ refreshKey }: SongListProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-useEffect(() => {
-  const fetchSongs = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  // const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
-      const res = await SongService.getAll();
-      console.log("🎵 SongService response:", res);
-      setSongs(res);
+  useEffect(() => {
+    const fetchSongs = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-      // ✅ Show toast when songs successfully refresh (only on re-fetch)
-      if (refreshKey && refreshKey > 0) {
-        toast.success("🎶 Song library updated");
+        const res = await SongService.getAll();
+        console.log("🎵 SongService response:", res);
+        setSongs(res);
+
+        // ✅ Show toast when songs successfully refresh (only on re-fetch)
+        if (refreshKey && refreshKey > 0) {
+          toast.success("🎶 Song library updated");
+        }
+      } catch (err) {
+        console.error("❌ Error fetching songs:", err);
+        setError("Failed to fetch songs.");
+        toast.error("⚠️ Failed to load songs");
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("❌ Error fetching songs:", err);
-      setError("Failed to fetch songs.");
-      toast.error("⚠️ Failed to load songs");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  fetchSongs();
-}, [refreshKey]);
- // ✅ refresh list when parent form adds a new song
+    fetchSongs();
+  }, [refreshKey]);
+  // ✅ refresh list when parent form adds a new song
 
   if (loading) {
     return <p className="text-gray-400 animate-pulse">Loading songs...</p>;

@@ -19,15 +19,3 @@ SongChord.init(
   }
 );
 
-// ✅ explicitly declare both foreignKey + otherKey for Sequelize to use snake_case
-Song.belongsToMany(Chord, {
-  through: SongChord,
-  foreignKey: "song_id",
-  otherKey: "chord_id",
-});
-
-Chord.belongsToMany(Song, {
-  through: SongChord,
-  foreignKey: "chord_id",
-  otherKey: "song_id",
-});
