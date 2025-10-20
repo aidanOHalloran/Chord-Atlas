@@ -22,7 +22,8 @@ export default function SongList({ refreshKey }: SongListProps) {
         setError("");
 
         const res = await SongService.getAll();
-        console.log("🎵 SongService response:", res);
+        // console.log("🎵 SongService response:", res);
+
         setSongs(res);
 
         // ✅ Show toast when songs successfully refresh (only on re-fetch)
@@ -42,23 +43,23 @@ export default function SongList({ refreshKey }: SongListProps) {
   }, [refreshKey]);
   // ✅ refresh list when parent form adds a new song
 
-  if (loading) {
-    return <p className="text-gray-400 animate-pulse">Loading songs...</p>;
-  }
+    if (loading) {
+      return <p className="text-gray-400 animate-pulse">Loading songs...</p>;
+    }
 
-  if (error) {
-    return <p className="text-red-400">{error}</p>;
-  }
+    if (error) {
+      return <p className="text-red-400">{error}</p>;
+    }
 
-  if (songs.length === 0) {
-    return <p className="text-gray-400">No songs found.</p>;
-  }
+    if (songs.length === 0) {
+      return <p className="text-gray-400">No songs found.</p>;
+    }
 
-  return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {songs.map((song) => (
-        <SongItem key={song.id} song={song} />
-      ))}
-    </div>
-  );
-}
+    return (
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {songs.map((song) => (
+          <SongItem key={song.id} song={song} />
+        ))}
+      </div>
+    );
+  }

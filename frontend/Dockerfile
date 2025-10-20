@@ -20,7 +20,7 @@ WORKDIR /usr/share/nginx/html
 COPY --from=builder /app/dist ./
 
 # 4. Copy custom nginx config if you have one (optional)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 5. Expose and start
 EXPOSE 80

@@ -1,3 +1,5 @@
+QUICK_START.txt
+
 🚀 Run Commands 🚀
 
 Production:
