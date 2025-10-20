@@ -1,7 +1,7 @@
 import { useState } from "react";
-import SongList from "../components/SongList/SongList";
+import SongList from "../components/Songs/SongList/SongList";
 import { Link } from "react-router-dom";
-import AddSongForm from "../components/AddSongForm/AddSongForm";
+import AddSongForm from "../components/Songs/AddSongForm/AddSongForm";
 
 export default function SongLibraryPage() {
   const [refresh, setRefresh] = useState(0);

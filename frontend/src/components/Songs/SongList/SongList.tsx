@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { SongService } from "../../services/api";
+import { SongService } from "../../../services/api";
 import SongItem from "../SongItem/SongItem";
-import type { Song } from "../../types/models";
+import type { Song } from "../../../types/models";
 import toast from "react-hot-toast";
 
 interface SongListProps {

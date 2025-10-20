@@ -12,6 +12,7 @@ export class Song extends Model {
   declare id: number;
   declare title: string;
   declare artist: string;
+  declare capo_fret: number;
   declare song_key: string;
   declare notes: string;
 
@@ -25,6 +26,7 @@ Song.init(
   {
     title: { type: DataTypes.STRING, allowNull: false },
     artist: { type: DataTypes.STRING, allowNull: false },
+    capo_fret: { type: DataTypes.INTEGER, defaultValue: 0 },
     song_key: { type: DataTypes.STRING },
     notes: { type: DataTypes.TEXT },
   },

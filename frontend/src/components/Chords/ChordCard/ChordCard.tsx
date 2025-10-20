@@ -16,7 +16,7 @@ export default function ChordCard({ chord, onDelete }: Props) {
   const stringTooltips = getStringTooltips(currentTuning);
 
   // Reverse for right-to-left display
-  const reversedNotes = [...currentTuning].reverse();
+  const reversedNotes = [...currentTuning]
   const reversedTips = [...stringTooltips].reverse();
 
   const frets = chord.frets?.map((f) => Number(f)) ?? [];

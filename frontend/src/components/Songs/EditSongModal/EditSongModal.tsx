@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { SongService, ChordService } from "../../services/api";
-import type { Song, Chord } from "../../types/models";
+import { SongService, ChordService } from "../../../services/api";
+import type { Song, Chord } from "../../../types/models";
 import toast from "react-hot-toast";
 
 interface EditSongModalProps {

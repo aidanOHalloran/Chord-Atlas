@@ -22,6 +22,7 @@ export const SongService = {
   async create(songData: {
     title: string;
     artist: string;
+    capo_fret?: number;
     song_key?: string;
     notes?: string;
     chordIds?: number[];

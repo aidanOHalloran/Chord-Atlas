@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { Song } from "../../types/models";
+import type { Song } from "../../../types/models";
 
 interface SongItemProps {
   song: Song;
@@ -15,6 +15,10 @@ export default function SongItem({ song }: SongItemProps) {
         <h3 className="text-xl font-semibold text-white">{song.title}</h3>
         <p className="text-gray-300">{song.artist}</p>
       </div>
+
+      <p className="text-sm text-gray-400 mb-3">
+        Capo Fret: <span className="font-medium text-gray-200">{song.capo_fret == null ? 0 : song.capo_fret}</span>
+      </p>
 
       <p className="text-sm text-gray-400 mb-3">
         Key: <span className="font-medium text-gray-200">{song.song_key}</span>

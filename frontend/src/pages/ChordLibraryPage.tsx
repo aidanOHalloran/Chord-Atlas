@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import AddChordForm from "../components/AddChordForm/AddChordForm";
+import AddChordForm from "../components/Chords/AddChordForm/AddChordForm";
 import ChordCard from "../components/Chords/ChordCard/ChordCard";
 import type { Chord } from "../types/models";
 

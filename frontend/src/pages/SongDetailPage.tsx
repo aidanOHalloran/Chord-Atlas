@@ -2,8 +2,9 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SongService } from "../services/api";
 import type { Song } from "../types/models";
-import EditSongModal from "../components/EditSongModal/EditSongModal";
+import EditSongModal from "../components/Songs/EditSongModal/EditSongModal";
 import ChordCard from "../components/Chords/ChordCard/ChordCard";
+import SongHeader from "../components/Songs/SongHeader/SongHeader";
 
 export default function SongDetailPage() {
   const { id } = useParams();
@@ -39,12 +40,7 @@ export default function SongDetailPage() {
 
       {/* Header */}
       <div className="flex justify-between items-start mb-10">
-        <div>
-          <h1 className="text-5xl font-bold text-blue-400 mb-2">{song.title}</h1>
-          <p className="text-xl text-gray-300">{song.artist}</p>
-          <p className="text-gray-500 mt-1">Key: {song.song_key}</p>
-        </div>
-
+        <SongHeader song={song} />
         <button
           onClick={() => setShowEdit(true)}
           className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition"
@@ -62,7 +58,7 @@ export default function SongDetailPage() {
               <ChordCard
                 key={chord.id}
                 chord={chord}
-                onDelete={() => {}} // disabled for detail page
+                onDelete={() => { }} // disabled for detail page
               />
             ))}
           </div>

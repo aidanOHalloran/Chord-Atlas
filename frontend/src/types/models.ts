@@ -14,6 +14,7 @@ export interface Song {
   id: number;
   title: string;
   artist: string;
+  capo_fret: number;
   song_key: string;
   notes?: string;
   Chords?: Chord[];
