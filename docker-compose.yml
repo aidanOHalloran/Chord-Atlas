@@ -18,37 +18,39 @@ services:
       - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   backend:
-    build:
-      context: ./backend
+    # This image will be pushed to Docker Hub
+    image: amohall/chordatlas-backend:latest
     container_name: chordatlas-backend
     restart: unless-stopped
+    working_dir: /app
+    command: ["npm", "run", "start"]
+    environment:
+      NODE_ENV: production
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: rootpass
+      DB_NAME: chordatlas
+    expose:
+      - "5000"
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - ./backend/.env
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-    expose:
-      - "5000"  # only internal, no host port
-    volumes:
-      - ./backend:/app
-    command: >
-      sh -c "sleep 10 && npm run start"  # production start
 
   frontend:
-    build:
-      context: ./frontend
+    # This image will be pushed to Docker Hub
+    image: amohall/chordatlas-frontend:latest
     container_name: chordatlas-frontend
     restart: unless-stopped
+    working_dir: /app
+    command: ["npm", "run", "build"]
+    environment:
+      NODE_ENV: production
+      VITE_API_BASE_URL: /api
     depends_on:
       - backend
-    environment:
-      VITE_API_BASE_URL: /api
-    command: ["npm", "run", "build"]
     volumes:
-      - ./frontend:/app
+      - ./frontend/dist:/app/dist  # only if building locally
 
   nginx:
     image: nginx:latest

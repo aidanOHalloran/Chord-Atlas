@@ -1,24 +1,27 @@
+# frontend/Dockerfile
+
 # ---- Builder Stage ----
 FROM node:20-bullseye-slim AS builder
 WORKDIR /app
 
-# Copy dependency manifests and install
+# 1. Install dependencies
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --omit=optional
 
-# Copy the rest of the app and build
+# 2. Copy source and build
 COPY . .
 RUN npm run build
 
-# ---- Runner Stage ----
-FROM node:20-bullseye-slim AS runner
-WORKDIR /app
+# ---- Nginx Runner Stage ----
+FROM nginx:alpine AS runner
+WORKDIR /usr/share/nginx/html
 
-# Install a minimal static server
-RUN npm install -g serve
+# 3. Copy production build from builder
+COPY --from=builder /app/dist ./
 
-# Copy build output from builder
-COPY --from=builder /app/dist ./dist
+# 4. Copy custom nginx config if you have one (optional)
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 5173
-CMD ["serve", "-s", "dist", "-l", "5173", "--single"]
+# 5. Expose and start
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
