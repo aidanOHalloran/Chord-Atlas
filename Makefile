@@ -9,7 +9,7 @@
 #   make logs       → follow combined logs of all containers
 #   make backend    → restart only backend service
 #   make frontend   → restart only frontend service
-#   make clean      → remove containers, volumes, and networks
+#   make clean    `  → remove containers, volumes, and networks
 #   make dbshell    → open MySQL shell inside db container
 #   make ps         → list running containers for dev stack
 #   make prod       → start production stack
@@ -61,7 +61,7 @@ ps:
 	docker compose -f $(DEV_FILE) ps
 
 clean:
-	@echo Cleaning environment (containers, volumes, networks)...
+	@echo "Cleaning environment (containers, volumes, networks)..."
 	docker compose -f $(DEV_FILE) down -v --remove-orphans
 	@echo Cleanup complete.
 

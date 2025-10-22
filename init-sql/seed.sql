@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS songs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   artist VARCHAR(255) NOT NULL,
-  capo_fret_position INT DEFAULT 0,
+  capo_fret INT DEFAULT 0,
   song_key VARCHAR(10),
   notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -43,7 +43,7 @@ INSERT INTO chords (name, frets, fingers) VALUES
 
 
 -- INITIAL SONGS
-INSERT INTO songs (title, artist, capo_fret_position, song_key, notes)
+INSERT INTO songs (title, artist, capo_fret, song_key, notes)
 VALUES
 ('Let It Be', 'The Beatles', 0, 'C', 'Classic progression, great for beginners.'),
 ('Wonderwall', 'Oasis', 2, 'Em', 'Very popular acoustic song.');
