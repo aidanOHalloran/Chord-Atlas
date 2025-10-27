@@ -10,7 +10,7 @@ export default function SongLibraryPage() {
   return (
     <div className="p-8 text-gray-200 max-w-6xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-semibold text-blue-400">🎶 Song Library</h1>
+        <h1 className="text-3xl font-semibold text-blue-400">Song Library</h1>
         <Link
           to="/"
           className="text-sm text-white hover:text-blue-400 transition-flex items-center gap-1"

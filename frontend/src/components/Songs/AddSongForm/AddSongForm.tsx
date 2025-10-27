@@ -162,7 +162,7 @@ export default function AddSongForm({ onAdded }: { onAdded: () => void }) {
               <button
                 type="button"
                 onClick={() => setShowChordModal(true)}
-                className="text-blue-400 underline hover:text-blue-300"
+                className="text-white underline hover:text-white"
               >
                 Add one here
               </button>
@@ -185,6 +185,8 @@ export default function AddSongForm({ onAdded }: { onAdded: () => void }) {
               ))}
             </div>
           )}
+
+          <br></br>
 
           <button
             type="button"
