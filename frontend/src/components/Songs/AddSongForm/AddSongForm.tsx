@@ -184,7 +184,7 @@ export default function AddSongForm({ onAdded }: { onAdded: () => void }) {
                 </button>
               ))}
             </div>
-          )}
+          )} 
 
           <br></br>
 

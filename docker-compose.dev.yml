@@ -1,5 +1,40 @@
 # docker-compose.dev.yml
 
+# -----------------------------------------------------------------------------
+# ChordAtlas Development Docker Compose Configuration
+# -----------------------------------------------------------------------------
+# Purpose:
+#   Defines the full development environment for ChordAtlas, supporting
+#   live code iteration, hot reloading, and persistent local databases.
+#
+# Integration with Makefile:
+#   This file is referenced by the Makefile as $(DEV_FILE).
+#   Common commands include:
+#     • make dev        → start the full dev stack in background
+#     • make stop       → stop all running dev containers
+#     • make rebuild    → rebuild all dev images without cache
+#     • make restart    → restart frontend and backend containers
+#     • make logs       → follow combined logs of all services
+#     • make clean      → remove containers, volumes, and networks
+#     • make dbshell    → open MySQL CLI inside db container
+#
+# Developer Use Cases:
+#   - Fresh restart:     make clean && make dev
+#   - Rebuild backend:   make backend
+#   - Inspect logs:      make logs
+#   - Connect to DB:     make dbshell
+#
+# Summary of stack:
+#   • MySQL 8 database for persistent data.
+#   • Node-based backend running `npm run dev` (live reload).
+#   • Node-based frontend (Vite) on http://localhost:5173.
+#   • NGINX proxy serving frontend build and routing /api → backend:5000.
+#   • Adminer DB UI on http://localhost:8081.
+#
+# Environment:
+#   Optimized for developer convenience, not security or performance.
+# -----------------------------------------------------------------------------
+
 version: "3.9"
 
 services:

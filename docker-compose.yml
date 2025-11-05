@@ -1,5 +1,40 @@
 # docker-compose.yml
 
+# -----------------------------------------------------------------------------
+# ChordAtlas Production Docker Compose Configuration
+# -----------------------------------------------------------------------------
+# Purpose:
+#   Defines the deployment-ready production environment for ChordAtlas.
+#   Uses prebuilt Docker Hub images and optimized configurations suitable
+#   for deployment on cloud hosts, VPS, or internal servers.
+#
+# Integration with Makefile:
+#   This file is referenced by the Makefile as $(PROD_FILE).
+#   Common commands include:
+#     • make prod          → start production stack (build + up)
+#     • make login         → authenticate with Docker Hub
+#     • make build-images  → build backend & frontend Docker images
+#     • make push-images   → push built images to Docker Hub
+#     • make release       → build + push both images in one step
+#
+# Admin / Maintenance Use Cases:
+#   - Fresh deploy with latest code:   make release && make prod
+#   - Restart running production stack: docker compose -f docker-compose.yml restart
+#   - Check running containers:        make ps
+#   - Tear down all production services: docker compose -f docker-compose.yml down
+#
+# Summary of stack:
+#   • Backend → prebuilt image (amohall/chordatlas-backend:latest).
+#   • Frontend → prebuilt image (amohall/chordatlas-frontend:latest).
+#   • Database → MySQL 8 with persisted data volume (db_data).
+#   • Adminer → lightweight SQL management UI at port 8081.
+#
+# Notes:
+#   - No live reload, local mounts, or npm installs occur here.
+#   - The system expects `make build-images` or CI/CD to produce final builds.
+#   - Secure credentials and proper secrets management should be used in real deployment.
+# -----------------------------------------------------------------------------
+
 version: "3.9"
 
 services:
