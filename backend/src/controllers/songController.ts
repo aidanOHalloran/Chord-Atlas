@@ -21,7 +21,7 @@ function safeParse(value: any) {
 export const getAllSongs = async (_: Request, res: Response) => {
   try {
     const songs = await Song.findAll({
-      attributes: ["id", "title", "artist", "capo_fret", "song_key", "notes"],
+      attributes: ["id", "title", "artist", "capo_fret", "song_key", "notes", "spotify_uri"],
       include: [
         {
           model: Chord,
@@ -85,14 +85,14 @@ export const getSongById = async (req: Request, res: Response) => {
 
 export const createSong = async (req: Request, res: Response) => {
   try {
-    const { title, artist, capo_fret, song_key, notes, chordIds } = req.body;
+    const { title, artist, capo_fret, song_key, notes, spotify_uri, chordIds } = req.body;
 
     if (!title || !artist) {
       return res.status(400).json({ error: "Title and artist are required" });
     }
 
     // Create song
-    const song = await Song.create({ title, artist, capo_fret, song_key, notes });
+    const song = await Song.create({ title, artist, capo_fret, song_key, notes, spotify_uri });
 
     // Associate existing chords by ID
     if (Array.isArray(chordIds) && chordIds.length > 0) {
@@ -117,14 +117,21 @@ export const createSong = async (req: Request, res: Response) => {
 export const updateSong = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, artist, capo_fret, song_key, notes, chordIds } = req.body;
+    const { title, artist, capo_fret, song_key, notes, spotify_uri, chordIds } = req.body;
 
     // Validate inputs
     const song = await Song.findByPk(id);
     if (!song) return res.status(404).json({ error: "Song not found" });
 
+    // Convert full link to URI if needed
+    let normalizedUri = spotify_uri;
+    if (spotify_uri?.includes("open.spotify.com/track/")) {
+      const id = spotify_uri.split("/track/")[1]?.split("?")[0];
+      normalizedUri = `spotify:track:${id}`;
+    }
+
     // Update basic fields
-    await song.update({ title, artist, capo_fret, song_key, notes });
+    await song.update({ title, artist, capo_fret, song_key, notes, spotify_uri: normalizedUri });
 
     // ✅ Update chord associations (if provided)
     if (Array.isArray(chordIds)) {

@@ -7,7 +7,7 @@ interface Props {
   onDelete: (id: number) => void;
 }
 
-export default function ChordCard({ chord, onDelete }: Props) {
+export default function({ chord, onDelete }: Props) {
   const strings = 6;
   const maxFrets = 5;
 
@@ -21,8 +21,8 @@ export default function ChordCard({ chord, onDelete }: Props) {
 
   const frets = chord.frets?.map((f) => Number(f)) ?? [];
   const fingers = chord.fingers ?? [];
-  const reversedFrets = [...frets].reverse();
-  const reversedFingers = [...fingers].reverse();
+  const reversedFrets = frets;
+  const reversedFingers = fingers;
 
   return (
     <Link

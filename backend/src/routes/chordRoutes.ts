@@ -1,5 +1,6 @@
 import express from "express";
-import { getAllChords, createChord, getChordById } from "../controllers/chordController";
+import { getAllChords, createChord, getChordById, getChordsTimelines } from "../controllers/chordController";
+import { getTimelineBySongId } from "../controllers/chordTimelineController";
 
 const router = express.Router();
 
@@ -12,4 +13,8 @@ router.get("/:id", getChordById);
 // ✅ POST /api/chords — create a new chord
 router.post("/", createChord);
 
+router.get("/:songId/timeline", getTimelineBySongId);
+
+// Add route last to avoid conflict with :id
+router.get("/:songId/timeline", getChordsTimelines);
 export default router;

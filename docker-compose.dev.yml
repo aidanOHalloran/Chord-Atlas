@@ -15,6 +15,11 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   backend:
     image: node:20-bullseye-slim
@@ -34,7 +39,8 @@ services:
       DB_PASS: rootpass
       DB_NAME: chordatlas
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     image: node:20-bullseye-slim
@@ -52,6 +58,9 @@ services:
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
       - VITE_FORCE_POLLING=true
+      - VITE_SPOTIFY_CLIENT_ID=fd60447ec28a4a8fa611d8b8769e7ba8
+      - VITE_SPOTIFY_REDIRECT_URI=http://127.0.0.1:5173/callback
+      - VITE_SPOTIFY_SCOPES=user-read-playback-state user-modify-playback-state streaming user-read-currently-playing
     depends_on:
       - backend
 

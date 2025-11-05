@@ -61,4 +61,20 @@ export const ChordService = {
   },
 };
 
+// --- CHORD TIMELINES -------------------------------------------------
+export const ChordTimelineService = {
+  async getBySongId(songId: number) {
+    try {
+      const res = await fetch(`/api/chords/${songId}/timeline`);
+      if (!res.ok) throw new Error("Failed to fetch chord timeline");
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    } catch (err) {
+      console.error("❌ Error loading chord timeline:", err);
+      return [];
+    }
+  },
+};
+
+
 export default api;

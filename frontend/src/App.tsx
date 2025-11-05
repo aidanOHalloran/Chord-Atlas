@@ -7,6 +7,7 @@ import SongLibraryPage from "./pages/SongLibraryPage";
 import SongDetailPage from "./pages/SongDetailPage";
 import ChordLibraryPage from "./pages/ChordLibraryPage";
 import ChordDetailPage from "./pages/ChordDetailPage";
+import SpotifyCallbackPage from "./pages/SpotifyCallbackPage";
 
 export default function App() {
   return (
@@ -21,6 +22,8 @@ export default function App() {
               <Route path="/songs/:id" element={<SongDetailPage />} />
               <Route path="/chords" element={<ChordLibraryPage />} />
               <Route path="/chords/:id" element={<ChordDetailPage />} />
+
+              <Route path="/callback" element={<SpotifyCallbackPage />} />
             </Routes>
           </Container>
         </main>

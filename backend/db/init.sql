@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS songs (
   song_key VARCHAR(10),
   notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  spotify_uri VARCHAR(100)
 );
 
 -- ---------------------------------------------------------------------
@@ -58,14 +59,14 @@ CREATE TABLE IF NOT EXISTS song_chords (
 );
 
 -- ---------------------------------------------------------------------
--- CHORD_TIMELINE (NEW)
+-- CHORD_TIMELINE
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS chord_timeline (
   id INT AUTO_INCREMENT PRIMARY KEY,
   song_id INT NOT NULL,
   chord_name VARCHAR(10) NOT NULL,
-  start_time DECIMAL(6,2) NOT NULL,
-  end_time DECIMAL(6,2) NOT NULL,
+  start_time DECIMAL(6,2) NOT NULL, -- in seconds, from start of song
+  end_time DECIMAL(6,2) NOT NULL, -- in seconds, from start of song
   FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
 );
 
@@ -76,7 +77,7 @@ CREATE TABLE IF NOT EXISTS chord_timeline (
 -- CHORDS ---------------------------------------------------------------
 INSERT INTO chords (name, frets, fingers, position, variation)
 VALUES
-('C',  JSON_ARRAY(0,3,2,0,1,0),   JSON_ARRAY(0,3,2,0,1,0),   1, 1),
+('C',  JSON_ARRAY(0,3,2,0,1,0),   JSON_ARRAY(0,3,2,0,3,0),   1, 1),
 ('G',  JSON_ARRAY(3,2,0,0,3,3),   JSON_ARRAY(2,1,0,0,3,4),   1, 1),
 ('D',  JSON_ARRAY(0,0,0,2,3,2),   JSON_ARRAY(0,0,0,1,3,2),   1, 1),
 ('A',  JSON_ARRAY(0,0,2,2,2,0),   JSON_ARRAY(0,0,1,2,3,0),   1, 1),
@@ -90,13 +91,14 @@ VALUES
 ('F#m', JSON_ARRAY(2,4,4,2,2,2), JSON_ARRAY(1,3,4,1,1,1), 2, 1);
 
 -- SONGS ---------------------------------------------------------------
-INSERT INTO songs (title, artist, capo_fret, song_key, notes)
+INSERT INTO songs (title, artist, capo_fret, song_key, notes, spotify_uri)
 VALUES
-('Wonderwall', 'Oasis', 2, 'Em', 'Classic 90s acoustic progression: Em–G–D–A7sus4'),
-('Hotel California', 'Eagles', 0, 'Bm', 'Iconic intro: Bm–F#–A–E–G–D–Em–F#'),
-('Let It Be', 'The Beatles', 0, 'C', 'Simple piano/guitar sequence: C–G–Am–F'),
-('Tennessee Whiskey', 'Chris Stapleton', 2, 'A', 'Two-chord soul groove: A–Bm (G-shape with capo 2)'),
-('Hallelujah', 'Leonard Cohen', 0, 'C', 'Gentle arpeggiated pattern: C–Am–F–G–C');
+('Wonderwall', 'Oasis', 2, 'Em', 'Classic 90s acoustic progression: Em-G-D-A7sus4', 'spotify:track:1qPbGZqppFwLwcBC1JQ6Vr'),
+('Hotel California', 'Eagles', 0, 'Bm', 'Iconic intro: Bm-F#-A-E-G-D-Em-F#', 'spotify:track:40riOy7x9W7GXjyGp4pjAv'),
+('Let It Be', 'The Beatles', 0, 'C', 'Simple piano/guitar sequence: C-G-Am-F', 'spotify:track:7iN1s7xHE4ifF5povM6A48'),
+('Tennessee Whiskey', 'Chris Stapleton', 2, 'A', 'Two-chord soul groove: A-Bm (G-shape with capo 2)', 'spotify:track:3fqwjXwUGN6vbzIwvyFMhx'),
+('Hallelujah', 'Leonard Cohen', 0, 'C', 'Gentle arpeggiated pattern: C-Am-F-G-C', 'spotify:track:7yzbimr8WVyAtBX3Eg6UL9');
+
 
 -- SONG_CHORDS ---------------------------------------------------------
 INSERT INTO song_chords (song_id, chord_id, position)
@@ -134,32 +136,7 @@ VALUES
 (5, (SELECT id FROM chords WHERE name='G'), 4),
 (5, (SELECT id FROM chords WHERE name='C'), 5);
 
--- ---------------------------------------------------------------------
--- CHORD_TIMELINE SEED EXAMPLES
--- ---------------------------------------------------------------------
--- Wonderwall progression (4 chords repeating)
-INSERT INTO chord_timeline (song_id, chord_name, start_time, end_time)
-VALUES
-(1, 'Em', 0.00, 4.00),
-(1, 'G', 4.00, 8.00),
-(1, 'D', 8.00, 12.00),
-(1, 'A7sus4', 12.00, 16.00),
-(1, 'Em', 16.00, 20.00),
-(1, 'G', 20.00, 24.00),
-(1, 'D', 24.00, 28.00),
-(1, 'A7sus4', 28.00, 32.00);
 
--- Hotel California intro (approximate 2-bar per chord)
-INSERT INTO chord_timeline (song_id, chord_name, start_time, end_time)
-VALUES
-(2, 'Bm', 0.00, 4.00),
-(2, 'F#m', 4.00, 8.00),
-(2, 'A', 8.00, 12.00),
-(2, 'E', 12.00, 16.00),
-(2, 'G', 16.00, 20.00),
-(2, 'D', 20.00, 24.00),
-(2, 'Em', 24.00, 28.00),
-(2, 'F#m', 28.00, 32.00);
 
 -- =====================================================================
 -- END OF SEED FILE

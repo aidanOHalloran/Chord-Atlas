@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Chord } from "../models/Chord";
+import { ChordTimeline } from "../models/ChordTimeline";
 
 // Helper to safely parse JSON fields like frets/fingers
 function safeParse(value: any) {
@@ -89,5 +90,34 @@ export const createChord = async (req: Request, res: Response) => {
   } catch (err) {
     console.error("❌ Error creating chord:", err);
     res.status(500).json({ error: "Failed to create chord" });
+  }
+};
+
+/*
+ * @desc Get chord timeline for a song
+ * @route GET /api/chords/:songId/timeline
+ */
+export const getChordsTimelines = async (req: Request, res: Response) => {
+  try {
+    const { songId } = req.params;
+
+    if (!songId || isNaN(Number(songId))) {
+      return res.status(400).json({ error: "Invalid song ID" });
+    }
+
+    const timeline = await ChordTimeline.findAll({
+      where: { song_id: songId },
+      order: [["start_time", "ASC"]],
+      attributes: ["chord_name", "start_time", "end_time"],
+    });
+
+    if (!timeline.length) {
+      return res.status(404).json({ message: "No chord timeline found for this song" });
+    }
+
+    res.json(timeline);
+  } catch (err) {
+    console.error("❌ Error fetching chord timeline:", err);
+    res.status(500).json({ error: "Failed to fetch chord timeline" });
   }
 };

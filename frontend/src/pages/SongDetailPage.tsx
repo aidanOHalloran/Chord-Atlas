@@ -5,6 +5,8 @@ import type { Song } from "../types/models";
 import EditSongModal from "../components/Songs/EditSongModal/EditSongModal";
 import ChordCard from "../components/Chords/ChordCard/ChordCard";
 import SongHeader from "../components/Songs/SongHeader/SongHeader";
+import ChordTimelineSection from "../components/Songs/ChordTimeline/ChordTimelineSection";
+import SpotifyPlayer from "../components/Songs/SpotifyPlayer/SpotifyPlayer";
 
 export default function SongDetailPage() {
   const { id } = useParams();
@@ -68,6 +70,26 @@ export default function SongDetailPage() {
           </p>
         )}
       </section>
+
+      {song.spotify_uri && (
+        <section className="mb-8">
+          <h3 className="text-2xl font-semibold text-green-400 mb-3">Spotify Link</h3>
+          <a
+            href={`https://open.spotify.com/track/${song.spotify_uri.replace("spotify:track:", "")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            Open in Spotify
+          </a>
+        </section>
+      )}
+
+
+      <SpotifyPlayer spotifyUri={song.spotify_uri} />
+
+
+      <ChordTimelineSection songId={song.id} />
 
       {/* Notes section */}
       {song.notes && (

@@ -17,5 +17,6 @@ export interface Song {
   capo_fret: number;
   song_key: string;
   notes?: string;
+  spotify_uri?: string;
   Chords?: Chord[];
 }

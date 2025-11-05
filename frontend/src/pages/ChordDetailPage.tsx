@@ -4,6 +4,10 @@ import axios from "axios";
 import type { Chord } from "../types/models";
 import ChordCard from "../components/Chords/ChordCard/ChordCard";
 import { allTunings, getStringTooltips } from "../static/guitarTunings";
+import FretPositions from "../components/Chords/ChordDetails/FretPositions";
+import FingerPositions from "../components/Chords/ChordDetails/FingerPositions";
+import GuitarTuning from "../components/Chords/ChordDetails/GuitarTuning";
+import StringNotes from "../components/Chords/ChordDetails/StringNotes";
 
 export default function ChordDetailPage() {
   const { id } = useParams();
@@ -37,6 +41,12 @@ export default function ChordDetailPage() {
   // 🎵 Display tuning info (Standard for now)
   const tuning = allTunings["Standard (EADGBE)"];
   const stringTips = getStringTooltips(tuning.notes);
+  
+  // reverse the order of each tip
+  stringTips.forEach((tip, index) => {
+    stringTips[index] = tip;
+    stringTips.reverse();
+  });
 
 
   return (
@@ -46,25 +56,32 @@ export default function ChordDetailPage() {
         ← Back to Library
       </Link>
 
-      {/* 🎸 Chord title */}
-      <h1 className="text-4xl font-bold text-blue-400 mt-4 mb-2">{chord.name}</h1>
-      <p className="text-gray-400 mb-4">
-        Variation {chord.variation ?? 1} · Position {chord.position ?? 0}
-      </p>
+      {/*  Center the title */}
+      <div className="text-center">
+        {/* 🎸 Chord title */}
+        <h1 className="text-4xl font-bold text-blue-400 mt-4 mb-2">{chord.name}</h1>
+        <p className="text-gray-400 mb-4">
+          Variation {chord.variation ?? 1} · Position {chord.position ?? 0}
+        </p>
+      </div>
 
       {/* 🪕 Chord visualization */}
       <div className="flex justify-center mb-8">
-        <ChordCard chord={chord} onDelete={() => {}} />
+        <ChordCard chord={chord} onDelete={() => { }} />
       </div>
 
-      {/* 🧩 Raw data panel */}
-      <div className="bg-neutral-900 rounded-xl p-6 border border-neutral-700 shadow-lg">
-        <h3 className="text-xl font-semibold text-blue-300 mb-3">Chord Data</h3>
-        <div className="space-y-2 text-sm text-gray-300">
-          <p><strong>Frets:</strong> {JSON.stringify(chord.frets)}</p>
-          <p><strong>Fingers:</strong> {JSON.stringify(chord.fingers)}</p>
-          <p><strong>Tuning:</strong> {tuning.notes.join(" - ")}</p>
-          <p><strong>Tooltips:</strong> {stringTips.join(" | ")}</p>
+      {/* 🧩 Chord details panel */}
+      <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl p-6 border border-neutral-600 shadow-xl">
+        <h3 className="text-2xl font-bold text-blue-300 mb-6 flex items-center">
+          <span className="mr-2">🎸</span>
+          Chord Details
+        </h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FretPositions frets={chord.frets || []} />
+          <FingerPositions fingers={chord.fingers || []} />
+          <GuitarTuning notes={tuning.notes} />
+          <StringNotes tips={stringTips} />
         </div>
       </div>
 

@@ -15,6 +15,7 @@ export class Song extends Model {
   declare capo_fret: number;
   declare song_key: string;
   declare notes: string;
+  declare spotify_uri: string;
 
   // ✅ Add Sequelize association mixins
   declare addChord: BelongsToManyAddAssociationMixin<Chord, number>;
@@ -29,6 +30,7 @@ Song.init(
     capo_fret: { type: DataTypes.INTEGER, defaultValue: 0 },
     song_key: { type: DataTypes.STRING },
     notes: { type: DataTypes.TEXT },
+    spotify_uri: { type: DataTypes.STRING(100), allowNull: true },
   },
   {
     sequelize,
