@@ -15,14 +15,14 @@ export default function LandingPage() {
       </motion.h1>
 
       {/* Subtitle */}
-      <motion.p
+      <motion.h4
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.4 }}
-        className="text-gray-400 max-w-md mx-auto text-lg mb-10 leading-relaxed"
+        className="text-gray-400 max-w-md mx-auto text-xl3 mb-10 leading-relaxed text-center"
       >
-        Manage your songs and chord progressions in one organized place.
-      </motion.p>
+        Manage songs, chords, and chord progressions in one organized place.
+      </motion.h4>
 
       {/* Buttons */}
       <motion.div
@@ -45,16 +45,6 @@ export default function LandingPage() {
           Chord Library
         </Link>
       </motion.div>
-
-      {/* Footer note */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-        className="text-gray-600 text-xs mt-12 tracking-wide uppercase"
-      >
-        © {new Date().getFullYear()} ChordAtlas
-      </motion.p>
     </div>
   );
 }
