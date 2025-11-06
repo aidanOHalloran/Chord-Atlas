@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
 import SongList from "../components/Songs/SongList/SongList";
 import { Link } from "react-router-dom";
@@ -8,12 +9,17 @@ export default function SongLibraryPage() {
   const [showForm, setShowForm] = useState(false);
 
   return (
-    <div className="p-8 text-gray-200 max-w-6xl mx-auto">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="p-8 text-gray-200 max-w-6xl mx-auto"
+    >
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-semibold text-blue-400">Song Library</h1>
         <Link
           to="/"
-          className="text-sm text-white hover:text-blue-400 transition-flex items-center gap-1"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-neutral-700 text-gray-200 bg-neutral-800 hover:bg-neutral-700 hover:text-blue-400 transition-all duration-200"
         >
           ← Back to Home
         </Link>
@@ -34,11 +40,10 @@ export default function SongLibraryPage() {
         </button>
 
         <div
-          className={`transition-all duration-500 ease-in-out ${
-            showForm
+          className={`transition-all duration-500 ease-in-out ${showForm
               ? "max-h-[1200px] opacity-100 p-5 border-t border-neutral-800"
               : "max-h-0 opacity-0"
-          } overflow-hidden`}
+            } overflow-hidden`}
         >
           <AddSongForm
             onAdded={() => {
@@ -51,6 +56,6 @@ export default function SongLibraryPage() {
 
       {/* Song List */}
       <SongList key={refresh} />
-    </div>
+    </motion.div>
   );
 }

@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SongService } from "../services/api";
@@ -31,18 +32,23 @@ export default function SongDetailPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 text-gray-200">
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="p-8 text-gray-200 max-w-6xl mx-auto"
+    >
       {/* Back link */}
       <Link
         to="/songs"
-        className="text-sm text-gray-400 hover:text-blue-400 transition inline-block mb-6"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-neutral-700 text-gray-200 bg-neutral-800 hover:bg-neutral-700 hover:text-blue-400 transition-all duration-200 mb-6"
       >
         ← Back to Song Library
       </Link>
 
       {/* Header */}
       <div className="flex justify-between items-start mb-10">
-        <SongHeader song={song} />
+        <SongHeader song={song} className="leading-tight" />
         <button
           onClick={() => setShowEdit(true)}
           className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition"
@@ -118,6 +124,6 @@ export default function SongDetailPage() {
           }}
         />
       )}
-    </div>
+    </motion.div>
   );
 }
