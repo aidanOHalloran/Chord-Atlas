@@ -204,7 +204,7 @@ export const getSongChordProgressions = async (req: Request, res: Response) => {
     const { id } = req.params;
     const progressions = await SongChordProgression.findAll({
       where: { song_id: id },
-      order: [["progression_name", "ASC"]],
+      order: [["order_index", "ASC"]], // use the new order_index field to order progressions
     });
     res.json(progressions);
   } catch (err) {

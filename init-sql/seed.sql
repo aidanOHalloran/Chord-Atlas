@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS song_chord_progressions (
   song_id INT NOT NULL,
   progression_name VARCHAR(100) NOT NULL,
   chord_ids JSON NOT NULL,     -- just array of chord IDs in order
+  order_index INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
 );
@@ -151,37 +152,37 @@ VALUES
 
 
 -- SONG_CHORD_PROGRESSIONS ----------------------------------------------
-INSERT INTO song_chord_progressions (song_id, progression_name, chord_ids)
+INSERT INTO song_chord_progressions (song_id, progression_name, chord_ids, order_index)
 VALUES
 -- WONDERWALL (Oasis)
-(1, 'Intro', JSON_ARRAY(9, 2, 3, 11)),
-(1, 'Verse', JSON_ARRAY(9, 2, 3, 11)),
-(1, 'Chorus', JSON_ARRAY(9, 2, 3, 11, 6)), -- sometimes adds F on last pass
-(1, 'Bridge', JSON_ARRAY(3, 9, 2, 11)),
+(1, 'Intro', JSON_ARRAY(9, 2, 3, 11), 1),
+(1, 'Verse', JSON_ARRAY(9, 2, 3, 11), 2),
+(1, 'Chorus', JSON_ARRAY(9, 2, 3, 11, 6), 3), -- sometimes adds F on last pass
+(1, 'Bridge', JSON_ARRAY(3, 9, 2, 11), 4),
 
 -- HOTEL CALIFORNIA (Eagles)
-(2, 'Intro', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
-(2, 'Verse', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
-(2, 'Chorus', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
-(2, 'Solo', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
+(2, 'Intro', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 1),
+(2, 'Verse', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 2),
+(2, 'Chorus', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 3),
+(2, 'Solo', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 4),
 
 -- LET IT BE (The Beatles)
-(3, 'Intro', JSON_ARRAY(1, 2, 10, 6)),
-(3, 'Verse', JSON_ARRAY(1, 2, 10, 6)),
-(3, 'Chorus', JSON_ARRAY(1, 2, 10, 6, 1)),
-(3, 'Bridge', JSON_ARRAY(5, 6, 1, 2)),
+(3, 'Intro', JSON_ARRAY(1, 2, 10, 6), 1),
+(3, 'Verse', JSON_ARRAY(1, 2, 10, 6), 2),
+(3, 'Chorus', JSON_ARRAY(1, 2, 10, 6, 1), 3),
+(3, 'Bridge', JSON_ARRAY(5, 6, 1, 2), 4),
 
 -- TENNESSEE WHISKEY (Chris Stapleton)
-(4, 'Intro', JSON_ARRAY(4, 7)),
-(4, 'Verse', JSON_ARRAY(4, 7)),
-(4, 'Chorus', JSON_ARRAY(4, 7)),
-(4, 'Outro', JSON_ARRAY(4, 7)),
+(4, 'Intro', JSON_ARRAY(4, 7), 1),
+(4, 'Verse', JSON_ARRAY(4, 7), 2),
+(4, 'Chorus', JSON_ARRAY(4, 7), 3),
+(4, 'Outro', JSON_ARRAY(4, 7), 4),
 
 -- HALLELUJAH (Leonard Cohen)
-(5, 'Intro', JSON_ARRAY(1, 10, 6, 2, 1)),
-(5, 'Verse', JSON_ARRAY(1, 10, 6, 2, 1)),
-(5, 'Refrain', JSON_ARRAY(1, 10, 6, 2, 1)),
-(5, 'Outro', JSON_ARRAY(1, 10, 6, 2, 1));
+(5, 'Intro', JSON_ARRAY(1, 10, 6, 2, 1), 1),
+(5, 'Verse', JSON_ARRAY(1, 10, 6, 2, 1), 2),
+(5, 'Refrain', JSON_ARRAY(1, 10, 6, 2, 1), 3),
+(5, 'Outro', JSON_ARRAY(1, 10, 6, 2, 1), 4);
 
 
 -- =====================================================================

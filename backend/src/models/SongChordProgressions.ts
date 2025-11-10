@@ -9,6 +9,7 @@ SongChordProgression.init(
         song_id: { type: DataTypes.INTEGER, allowNull: false },
         progression_name: { type: DataTypes.STRING, allowNull: false },
         chord_ids: { type: DataTypes.JSON, allowNull: false },
+        order_index: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
     },
     {
         sequelize,

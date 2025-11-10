@@ -9,6 +9,8 @@ import SongHeader from "../components/Songs/SongHeader/SongHeader";
 import ChordTimelineSection from "../components/Songs/ChordTimeline/ChordTimelineSection";
 import SpotifyPlayer from "../components/Songs/SpotifyPlayer/SpotifyPlayer";
 import SongChordProgressions from "../components/Songs/SongChordProgressions/SongChordProgressions";
+import ManageProgressionsModal from "../components/Songs/SongChordProgressions/ManageProgressionsModal";
+
 
 
 export default function SongDetailPage() {
@@ -16,6 +18,8 @@ export default function SongDetailPage() {
   const [song, setSong] = useState<Song | null>(null);
   const [showEdit, setShowEdit] = useState(false);
   const [progressions, setProgressions] = useState<SongChordProgression[]>([]);
+  const [showManageProgressionsModal, setShowManageProgressionsModal] = useState(false);
+
 
 
   useEffect(() => {
@@ -67,13 +71,22 @@ export default function SongDetailPage() {
       {/* Header */}
       <div className="flex justify-between items-start mb-10">
         <SongHeader song={song} className="leading-tight" />
-        <button
-          onClick={() => setShowEdit(true)}
-          className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition"
-        >
-          ✏️ Edit
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setShowManageProgressionsModal(true)}
+            className="bg-neutral-800 hover:bg-neutral-700 text-blue-300 px-4 py-2 rounded-lg text-sm font-medium border border-neutral-700 shadow-sm transition"
+          >
+            🎼 Manage Progressions
+          </button>
+          <button
+            onClick={() => setShowEdit(true)}
+            className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition"
+          >
+            ✏️ Edit
+          </button>
+        </div>
       </div>
+
 
       {/* Chords section */}
       <section className="mb-10">
@@ -147,6 +160,16 @@ export default function SongDetailPage() {
           }}
         />
       )}
+
+      {/* Manage Progressions Modal */}
+      <ManageProgressionsModal
+        isOpen={showManageProgressionsModal}
+        onClose={() => setShowManageProgressionsModal(false)}
+        songTitle={`${song.title} – ${song.artist}`}
+        progressions={progressions ?? []}
+        allChords={song.Chords ?? []}
+      />
+
     </motion.div>
   );
 }

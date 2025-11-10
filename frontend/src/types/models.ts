@@ -27,5 +27,6 @@ export interface SongChordProgression {
   progression_name: string;      // "Verse", "Chorus", "Bridge", etc.
   chord_ids: number[];           // stored JSON array from backend
   chords?: Chord[];              // optionally populated by backend
+  order_index?: number;           // new field to determine order of progressions
   created_at?: string;
 }
