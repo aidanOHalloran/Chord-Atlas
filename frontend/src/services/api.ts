@@ -39,6 +39,11 @@ export const SongService = {
   async delete(id: number): Promise<void> {
     await api.delete(`/songs/${id}`);
   },
+
+  async getChordProgressions(songId: number): Promise<any[]> {
+    const res = await api.get<any[]>(`/songs/${songId}/progressions`);
+    return res.data;
+  }
 };
 
 

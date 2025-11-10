@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS songs (
   notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  spotify_uri VARCHAR(100)
+  spotify_uri VARCHAR(100);
 );
 
 -- ---------------------------------------------------------------------
@@ -56,6 +56,19 @@ CREATE TABLE IF NOT EXISTS song_chords (
   position INT DEFAULT 0,
   FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE,
   FOREIGN KEY (chord_id) REFERENCES chords(id) ON DELETE CASCADE
+);
+
+
+-- ---------------------------------------------------------------------
+-- SONG_CHORD_PROGRESSIONS
+-- ---------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS song_chord_progressions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  song_id INT NOT NULL,
+  progression_name VARCHAR(100) NOT NULL,
+  chord_ids JSON NOT NULL,     -- just array of chord IDs in order
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
 );
 
 -- ---------------------------------------------------------------------
@@ -136,6 +149,39 @@ VALUES
 (5, (SELECT id FROM chords WHERE name='G'), 4),
 (5, (SELECT id FROM chords WHERE name='C'), 5);
 
+
+-- SONG_CHORD_PROGRESSIONS ----------------------------------------------
+INSERT INTO song_chord_progressions (song_id, progression_name, chord_ids)
+VALUES
+-- WONDERWALL (Oasis)
+(1, 'Intro', JSON_ARRAY(9, 2, 3, 11)),
+(1, 'Verse', JSON_ARRAY(9, 2, 3, 11)),
+(1, 'Chorus', JSON_ARRAY(9, 2, 3, 11, 6)), -- sometimes adds F on last pass
+(1, 'Bridge', JSON_ARRAY(3, 9, 2, 11)),
+
+-- HOTEL CALIFORNIA (Eagles)
+(2, 'Intro', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
+(2, 'Verse', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
+(2, 'Chorus', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
+(2, 'Solo', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12)),
+
+-- LET IT BE (The Beatles)
+(3, 'Intro', JSON_ARRAY(1, 2, 10, 6)),
+(3, 'Verse', JSON_ARRAY(1, 2, 10, 6)),
+(3, 'Chorus', JSON_ARRAY(1, 2, 10, 6, 1)),
+(3, 'Bridge', JSON_ARRAY(5, 6, 1, 2)),
+
+-- TENNESSEE WHISKEY (Chris Stapleton)
+(4, 'Intro', JSON_ARRAY(4, 7)),
+(4, 'Verse', JSON_ARRAY(4, 7)),
+(4, 'Chorus', JSON_ARRAY(4, 7)),
+(4, 'Outro', JSON_ARRAY(4, 7)),
+
+-- HALLELUJAH (Leonard Cohen)
+(5, 'Intro', JSON_ARRAY(1, 10, 6, 2, 1)),
+(5, 'Verse', JSON_ARRAY(1, 10, 6, 2, 1)),
+(5, 'Refrain', JSON_ARRAY(1, 10, 6, 2, 1)),
+(5, 'Outro', JSON_ARRAY(1, 10, 6, 2, 1));
 
 
 -- =====================================================================

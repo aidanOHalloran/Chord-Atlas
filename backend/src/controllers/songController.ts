@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Song } from "../models/Song";
 import { Chord } from "../models/Chord";
+import { SongChordProgression } from "../models/SongChordProgressions";
 import { SongChord } from "../models/SongChord";
 import { Op } from "sequelize";
 
@@ -21,7 +22,15 @@ function safeParse(value: any) {
 export const getAllSongs = async (_: Request, res: Response) => {
   try {
     const songs = await Song.findAll({
-      attributes: ["id", "title", "artist", "capo_fret", "song_key", "notes", "spotify_uri"],
+      attributes: [
+        "id",
+        "title",
+        "artist",
+        "capo_fret",
+        "song_key",
+        "notes",
+        "spotify_uri",
+      ],
       include: [
         {
           model: Chord,
@@ -32,7 +41,7 @@ export const getAllSongs = async (_: Request, res: Response) => {
     });
 
     // Convert Sequelize models → plain objects & parse JSON
-    const parsed = songs.map(song => {
+    const parsed = songs.map((song) => {
       const plainSong = song.get({ plain: true });
       plainSong.Chords = (plainSong.Chords || []).map((chord: any) => ({
         ...chord,
@@ -48,7 +57,6 @@ export const getAllSongs = async (_: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch songs" });
   }
 };
-
 
 // @desc    Get song by ID with chords
 // @route   GET /api/songs/:id
@@ -82,17 +90,24 @@ export const getSongById = async (req: Request, res: Response) => {
   }
 };
 
-
 export const createSong = async (req: Request, res: Response) => {
   try {
-    const { title, artist, capo_fret, song_key, notes, spotify_uri, chordIds } = req.body;
+    const { title, artist, capo_fret, song_key, notes, spotify_uri, chordIds } =
+      req.body;
 
     if (!title || !artist) {
       return res.status(400).json({ error: "Title and artist are required" });
     }
 
     // Create song
-    const song = await Song.create({ title, artist, capo_fret, song_key, notes, spotify_uri });
+    const song = await Song.create({
+      title,
+      artist,
+      capo_fret,
+      song_key,
+      notes,
+      spotify_uri,
+    });
 
     // Associate existing chords by ID
     if (Array.isArray(chordIds) && chordIds.length > 0) {
@@ -101,7 +116,9 @@ export const createSong = async (req: Request, res: Response) => {
     }
 
     const result = await Song.findByPk(song.id, {
-      include: [{ model: Chord, attributes: ["id", "name", "frets", "fingers"] }],
+      include: [
+        { model: Chord, attributes: ["id", "name", "frets", "fingers"] },
+      ],
     });
 
     res.status(201).json(result);
@@ -111,13 +128,13 @@ export const createSong = async (req: Request, res: Response) => {
   }
 };
 
-
 // @desc    Update an existing song and its chords
 // @route   PUT /api/songs/:id
 export const updateSong = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, artist, capo_fret, song_key, notes, spotify_uri, chordIds } = req.body;
+    const { title, artist, capo_fret, song_key, notes, spotify_uri, chordIds } =
+      req.body;
 
     // Validate inputs
     const song = await Song.findByPk(id);
@@ -131,7 +148,14 @@ export const updateSong = async (req: Request, res: Response) => {
     }
 
     // Update basic fields
-    await song.update({ title, artist, capo_fret, song_key, notes, spotify_uri: normalizedUri });
+    await song.update({
+      title,
+      artist,
+      capo_fret,
+      song_key,
+      notes,
+      spotify_uri: normalizedUri,
+    });
 
     // ✅ Update chord associations (if provided)
     if (Array.isArray(chordIds)) {
@@ -173,3 +197,18 @@ export const deleteSong = async (req: Request, res: Response) => {
   }
 };
 
+// @desc Get chord progressions for a song
+// @route GET /api/songs/:id/progressions
+export const getSongChordProgressions = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const progressions = await SongChordProgression.findAll({
+      where: { song_id: id },
+      order: [["progression_name", "ASC"]],
+    });
+    res.json(progressions);
+  } catch (err) {
+    console.error("❌ Error fetching chord progressions:", err);
+    res.status(500).json({ error: "Failed to fetch chord progressions" });
+  }
+};

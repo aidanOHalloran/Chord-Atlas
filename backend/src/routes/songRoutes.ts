@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllSongs, createSong, getSongById, updateSong, deleteSong } from "../controllers/songController";
+import { getAllSongs, createSong, getSongById, updateSong, deleteSong, getSongChordProgressions } from "../controllers/songController";
 
 const router = express.Router();
 
@@ -17,5 +17,8 @@ router.put("/:id", updateSong);
 
 // DELETE /api/songs/:id — delete song by ID
 router.delete("/:id", deleteSong); // (optional if not yet added)
+
+// GET /api/songs/:id/progressions — get chord progressions for a song
+router.get("/:id/progressions", getSongChordProgressions);
 
 export default router;

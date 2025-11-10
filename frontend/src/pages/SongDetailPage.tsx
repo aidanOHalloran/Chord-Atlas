@@ -2,17 +2,35 @@ import { motion } from "framer-motion";
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SongService } from "../services/api";
-import type { Song } from "../types/models";
+import type { Song, SongChordProgression } from "../types/models";
 import EditSongModal from "../components/Songs/EditSongModal/EditSongModal";
 import ChordCard from "../components/Chords/ChordCard/ChordCard";
 import SongHeader from "../components/Songs/SongHeader/SongHeader";
 import ChordTimelineSection from "../components/Songs/ChordTimeline/ChordTimelineSection";
 import SpotifyPlayer from "../components/Songs/SpotifyPlayer/SpotifyPlayer";
+import SongChordProgressions from "../components/Songs/SongChordProgressions/SongChordProgressions";
+
 
 export default function SongDetailPage() {
   const { id } = useParams();
   const [song, setSong] = useState<Song | null>(null);
   const [showEdit, setShowEdit] = useState(false);
+  const [progressions, setProgressions] = useState<SongChordProgression[]>([]);
+
+
+  useEffect(() => {
+    if (id) {
+      SongService.getAll().then((songs) => {
+        const found = songs.find((s) => s.id === Number(id));
+        setSong(found || null);
+      });
+
+      SongService.getChordProgressions(Number(id))
+        .then(setProgressions)
+        .catch(console.error);
+    }
+  }, [id]);
+
 
   useEffect(() => {
     if (id) {
@@ -32,7 +50,7 @@ export default function SongDetailPage() {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
@@ -76,6 +94,11 @@ export default function SongDetailPage() {
           </p>
         )}
       </section>
+
+      <SongChordProgressions
+        progressions={progressions ?? []}
+        allChords={song?.Chords ?? []}
+      />
 
       {song.spotify_uri && (
         <section className="mb-8">

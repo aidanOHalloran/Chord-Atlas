@@ -20,3 +20,12 @@ export interface Song {
   spotify_uri?: string;
   Chords?: Chord[];
 }
+
+export interface SongChordProgression {
+  id: number;
+  song_id: number;
+  progression_name: string;      // "Verse", "Chorus", "Bridge", etc.
+  chord_ids: number[];           // stored JSON array from backend
+  chords?: Chord[];              // optionally populated by backend
+  created_at?: string;
+}
