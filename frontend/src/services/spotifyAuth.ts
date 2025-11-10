@@ -19,13 +19,13 @@ console.log("[Auth Config] Scopes:", scopes);
 // PKCE Helpers
 // ────────────────────────────────────────────────
 
-function generateCodeVerifier(length = 128): string {
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  return Array.from(crypto.getRandomValues(new Uint8Array(length)))
-    .map((x) => possible[x % possible.length])
-    .join("");
-}
+// function generateCodeVerifier(length = 128): string {
+//   const possible =
+//     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+//   return Array.from(crypto.getRandomValues(new Uint8Array(length)))
+//     .map((x) => possible[x % possible.length])
+//     .join("");
+// }
 
 // ────────────────────────────────────────────────
 // PKCE Verifier Persistence (Docker-safe)

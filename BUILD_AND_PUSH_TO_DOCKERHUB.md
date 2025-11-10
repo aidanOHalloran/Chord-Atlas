@@ -1,3 +1,13 @@
+| Step | Command                   | Description                                    |
+| ---- | ------------------------- | ---------------------------------------------- |
+| 1    | `make login`              | Log into Docker Hub                            |
+| 2    | `make build-images`       | Build backend + frontend images                |
+| 3    | `make push-images`        | Push both images to Docker Hub                 |
+| 4    | `make release TAG=vX.Y.Z` | Build + push with version tag                  |
+| 5    | `make prod`               | Deploy production stack with Docker Hub images |
+
+
+
    #############################
             NEW VERSION
    #############################

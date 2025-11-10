@@ -14,7 +14,7 @@ export default function EditSongModal({ song, onClose, onUpdated }: EditSongModa
   const [artist, setArtist] = useState(song.artist);
   const [songKey, setSongKey] = useState(song.song_key || "");
   const [notes, setNotes] = useState(song.notes || "");
-  const [spotifyUri, setSpotifyUri] = useState(song.spotify_uri || "");
+  const [spotifyUri, /*setSpotifyUri */] = useState(song.spotify_uri || "");
   const [chords, setChords] = useState<Chord[]>([]);
   const [selectedChordIds, setSelectedChordIds] = useState<number[]>(
     song.Chords?.map((c) => c.id) || []

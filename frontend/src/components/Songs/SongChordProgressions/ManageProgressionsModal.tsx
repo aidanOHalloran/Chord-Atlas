@@ -21,7 +21,7 @@ export default function ManageProgressionsModal({
     progressions,
     chords,
     loading,
-    addProgression,
+    // addProgression,
     reorderProgressions,
   } = useProgressionsManager(songId);
 
