@@ -31,7 +31,10 @@ export const SongService = {
     return res.data;
   },
 
-  async update(id: number, songData: Partial<Song> & { chordIds?: number[] }): Promise<Song> {
+  async update(
+    id: number,
+    songData: Partial<Song> & { chordIds?: number[] }
+  ): Promise<Song> {
     const res = await api.put<Song>(`/songs/${id}`, songData);
     return res.data;
   },
@@ -43,9 +46,26 @@ export const SongService = {
   async getChordProgressions(songId: number): Promise<any[]> {
     const res = await api.get<any[]>(`/songs/${songId}/progressions`);
     return res.data;
-  }
-};
+  },
 
+  async addChordProgression(
+    songId: number,
+    data: {
+      progression_name: string;
+      chord_ids: number[];
+      order_index?: number;
+    }
+  ) {
+    const res = await fetch(`/api/songs/${songId}/progressions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) throw new Error("Failed to add chord progression");
+    return await res.json();
+  },
+};
 
 // 🎸 Chord API -----------------------------------------------------
 export const ChordService = {
@@ -80,6 +100,5 @@ export const ChordTimelineService = {
     }
   },
 };
-
 
 export default api;

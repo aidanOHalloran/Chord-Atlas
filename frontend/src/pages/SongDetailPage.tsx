@@ -166,9 +166,9 @@ export default function SongDetailPage() {
         isOpen={showManageProgressionsModal}
         onClose={() => setShowManageProgressionsModal(false)}
         songTitle={`${song.title} – ${song.artist}`}
-        progressions={progressions ?? []}
-        allChords={song.Chords ?? []}
+        songId={song.id}
       />
+
 
     </motion.div>
   );

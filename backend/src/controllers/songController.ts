@@ -212,3 +212,45 @@ export const getSongChordProgressions = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch chord progressions" });
   }
 };
+
+// @desc Create or update chord progressions for a song
+// @route POST /api/songs/:id/progressions
+export const upsertSongChordProgressions = async (req: Request, res: Response) => {
+  try{
+    const { progression_name, chord_ids, order_index } = req.body;
+
+    if (!progression_name || !Array.isArray(chord_ids)) {
+      return res.status(400).json({ error: "Invalid payload" });
+    }
+
+    const newProgression = await SongChordProgression.create({
+      song_id: req.params.id,
+      progression_name,
+      chord_ids,
+      order_index: order_index ?? 0,
+    });
+
+    res.json(newProgression);
+  }catch(err){
+    console.error("❌ Error upserting chord progressions:", err);
+    res.status(500).json({ error: "Failed to upsert chord progressions" });
+  }
+}
+
+// @desc Update a chord progression by ID
+// @route PUT /api/progressions/:id
+export const updateSongChordProgressions = async (req: Request, res: Response) => {
+  try {
+    const { order_index, chord_ids } = req.body;
+    const updateData: any = {};
+    if (order_index !== undefined) updateData.order_index = order_index;
+    if (Array.isArray(chord_ids)) updateData.chord_ids = chord_ids;
+
+    await SongChordProgression.update(updateData, { where: { id: req.params.id } });
+    res.json({ success: true });
+  }
+  catch (err) {
+    console.error("❌ Error updating chord progression:", err);
+    res.status(500).json({ error: "Failed to update chord progression" });
+  }
+}

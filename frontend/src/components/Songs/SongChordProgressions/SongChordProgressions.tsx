@@ -1,10 +1,11 @@
+// src/components/Songs/SongChordProgressions/SongChordProgressions.tsx
 import { motion } from "framer-motion";
 import type { SongChordProgression, Chord } from "../../../types/models";
 import ChordCard from "../../Chords/ChordCard/ChordCard";
 
 interface SongChordProgressionsProps {
   progressions: SongChordProgression[];
-  allChords: Chord[]; // ✅ all available chords (to map IDs → objects)
+  allChords: Chord[]; // all available chords (to map IDs → objects)
 }
 
 function getChordsFromIds(ids: number[] = [], allChords: Chord[] = []): Chord[] {
@@ -18,10 +19,11 @@ function getChordsFromIds(ids: number[] = [], allChords: Chord[] = []): Chord[] 
  * Displays all chord progressions for a song, such as Intro, Verse, Chorus, etc.
  * Each section lists its name and associated chord sequence.
  */
-export default function SongChordProgressions({ progressions = [], allChords = [] }: SongChordProgressionsProps) {
-  if (!progressions.length) {
-    return null;
-  }
+export default function SongChordProgressions({
+  progressions = [],
+  allChords = [],
+}: SongChordProgressionsProps) {
+  if (!progressions.length) return null;
 
   return (
     <motion.section

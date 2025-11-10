@@ -5,6 +5,7 @@ import { sequelize } from "./db";
 import songRoutes from "./routes/songRoutes";
 import chordRoutes from "./routes/chordRoutes";
 import {defineAssociations} from "./models/associations";
+import progressionRoutes from "./routes/progressionRoutes";
 
 dotenv.config();
 defineAssociations();
@@ -25,6 +26,7 @@ app.use(express.json());
 // Base routes
 app.use("/api/songs", songRoutes);
 app.use("/api/chords", chordRoutes);
+app.use("/api/progressions", progressionRoutes);
 
 // Health check route
 app.get("/", (_, res) => res.send("ChordAtlas backend running!"));
