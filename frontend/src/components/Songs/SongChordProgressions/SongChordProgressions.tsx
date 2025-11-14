@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import type { SongChordProgression, Chord } from "../../../types/models";
 import ChordCard from "../../Chords/ChordCard/ChordCard";
+import ChordProgressionOrderLabel from "./ChordProgressionOrderLabel";
 
 interface SongChordProgressionsProps {
   progressions: SongChordProgression[];
@@ -37,25 +38,31 @@ export default function SongChordProgressions({
       </h3>
 
       <div className="space-y-8">
-        {progressions.map((p) => {
-          const chords = getChordsFromIds(p.chord_ids, allChords);
+        {progressions.map((progression) => {
+          const chords = getChordsFromIds(progression.chord_ids, allChords);
 
           return (
             <div
-              key={p.id}
+              key={progression.id}
               className="bg-neutral-900 border border-neutral-800 rounded-xl p-5 shadow-inner hover:border-blue-700 transition-all"
             >
               <h4 className="text-xl font-semibold text-blue-400 mb-4">
-                {p.progression_name}
+                {progression.progression_name}
+
+                {chords.length > 0 && (
+                <ChordProgressionOrderLabel chords={chords} />
+              )}
               </h4>
+
+              
 
               {chords.length > 0 ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {chords.map((chord, index) => (
                     <ChordCard
-                      key={`${p.id}-${chord.id}-${index}`}
+                      key={`${progression.id}-${chord.id}-${index}`}
                       chord={chord}
-                      onDelete={() => {}} // disabled for now
+                      onDelete={() => { }} // disabled for now
                     />
                   ))}
                 </div>

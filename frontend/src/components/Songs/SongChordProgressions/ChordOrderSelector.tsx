@@ -19,7 +19,7 @@ export default function ChordOrderSelector({
     .map((id) => allChords.find((c) => c.id === id))
     .filter((c): c is Chord => !!c);
 
-  const availableChords = allChords.filter((c) => !selectedIds.includes(c.id));
+  const availableChords = allChords;
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -30,9 +30,7 @@ export default function ChordOrderSelector({
   };
 
   const addChord = (id: number) => {
-    if (!selectedIds.includes(id)) {
-      onChange([...selectedIds, id]);
-    }
+      onChange([...selectedIds, id]); // allow multiples of the same chord
   };
 
   const removeChord = (id: number) => {
@@ -60,7 +58,7 @@ export default function ChordOrderSelector({
               {selectedChords.map((chord, index) => (
                 <Draggable
                   key={chord.id}
-                  draggableId={`selected-${chord.id}`}
+                  draggableId={`selected-${chord.id}-${index}`}
                   index={index}
                 >
                   {(prov, snapshot) => (

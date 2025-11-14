@@ -3,6 +3,7 @@ import { useProgressionsManager } from "../../../hooks/useProgressionsManager";
 import SongChordProgressions from "./SongChordProgressions";
 import ProgressionReorderList from "./ProgressionReorderList";
 import ChordOrderSelector from "./ChordOrderSelector";
+import { useState } from "react";
 
 interface ManageProgressionsModalProps {
   isOpen: boolean;
@@ -21,9 +22,13 @@ export default function ManageProgressionsModal({
     progressions,
     chords,
     loading,
-    // addProgression,
+    addProgression,
     reorderProgressions,
+    reload,
   } = useProgressionsManager(songId);
+  const [newName, setNewName] = useState("");
+  const [newChordIds, setNewChordIds] = useState<number[]>([]);
+
 
   if (!isOpen) return null;
 
@@ -71,8 +76,35 @@ export default function ManageProgressionsModal({
             <h4 className="text-lg font-semibold text-blue-400 mb-2">
               ➕ Add New Progression
             </h4>
-            <ChordOrderSelector allChords={chords} value={[]} onChange={() => { }} />
+
+            <input
+              type="text"
+              placeholder="Progression name"
+              className="w-full px-3 py-2 bg-neutral-900 border border-neutral-700 rounded-lg text-gray-200 mb-3"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+            />
+
+            <ChordOrderSelector
+              allChords={chords}
+              value={newChordIds}
+              onChange={setNewChordIds}
+            />
+
+            <button
+              onClick={async () => {
+                await addProgression(newName || "Untitled", newChordIds);
+                setNewName("");
+                setNewChordIds([]);
+                await reload();
+              }}
+              disabled={newChordIds.length === 0}
+              className="mt-3 px-4 py-2 rounded-lg bg-blue-700 text-white hover:bg-blue-600 disabled:bg-neutral-700 disabled:text-neutral-500 transition"
+            >
+              Save Progression
+            </button>
           </div>
+
 
           <div>
             <h4 className="text-lg font-semibold text-blue-400 mb-2">
