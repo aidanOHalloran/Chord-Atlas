@@ -7,12 +7,19 @@ import type { Chord } from "../types/models";
 import { Link } from "react-router-dom";
 import SearchBar from "../components/GeneralUI/SearchBar/SearchBar";
 import { useChordSearch } from "../hooks/useChordSearch";
+import { chordMatchesSearch, sortChordsByRoot } from "../static/chordHelpers";
+import { extractRoot, normalizeRoot } from "../static/noteUtils";
+import { ROOT_ORDER } from "../static/noteOrder"; // optional, for sorting
+
 
 export default function ChordLibraryPage() {
   const [chords, setChords] = useState<Chord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [rootFilter, setRootFilter] = useState<string>("all");
+
 
   const { searchTerm, handleChange } = useChordSearch();
 
@@ -33,7 +40,15 @@ export default function ChordLibraryPage() {
 
   useEffect(() => {
     fetchChords();
+
   }, []);
+
+  const uniqueRoots = Array.from(
+    new Set(
+      chords.map(c => normalizeRoot(extractRoot(c.name)))
+    )
+  ).sort((a, b) => ROOT_ORDER.indexOf(a) - ROOT_ORDER.indexOf(b));
+
 
   const handleChordAdded = async () => {
     await fetchChords();
@@ -51,9 +66,20 @@ export default function ChordLibraryPage() {
   };
 
   // 🔍 Filter chords instantly based on search
-  const filteredChords = chords.filter((c) =>
-    c.name.toLowerCase().includes(searchTerm.toLowerCase())
+  let filteredChords = chords.filter(c =>
+    chordMatchesSearch(c, searchTerm)
   );
+
+  // ✅ APPLY ROOT FILTER HERE
+  if (rootFilter !== "all") {
+    filteredChords = filteredChords.filter(c => {
+      const root = normalizeRoot(extractRoot(c.name));
+      return root === rootFilter;
+    });
+  }
+
+  // Now apply sorting (ascending by default)
+  filteredChords = sortChordsByRoot(filteredChords, sortDirection);
 
   return (
     <motion.div
@@ -106,6 +132,60 @@ export default function ChordLibraryPage() {
           placeholder="Search chords by name..."
         />
       </div>
+
+      {/* Sort + Filter Toolbar */}
+      <div className="mb-8 flex flex-col items-center">
+
+        <div className="flex items-center gap-8 bg-neutral-900 border border-neutral-800 rounded-xl px-6 py-4 shadow-md">
+
+          {/* Sort */}
+          <div className="flex items-center gap-2">
+            <span className="text-blue-400 flex items-center gap-1">
+              <svg width="18" height="18" fill="currentColor" className="opacity-80">
+                <path d="M11 3h4v2h-4V3zM7 7h8v2H7V7zm-4 4h12v2H3v-2zm4 4h8v2H7v-2z" />
+              </svg>
+              Sort
+            </span>
+
+            <select
+              className="bg-neutral-800 border border-neutral-700 text-gray-300 rounded p-2"
+              value={sortDirection}
+              onChange={(e) => setSortDirection(e.target.value as "asc" | "desc")}
+            >
+              <option value="asc">A → G</option>
+              <option value="desc">G → A</option>
+            </select>
+          </div>
+
+          {/* Separator */}
+          <div className="w-px h-8 bg-neutral-700 opacity-60"></div>
+
+          {/* Filter */}
+          <div className="flex items-center gap-2">
+            <span className="text-green-400 flex items-center gap-1">
+              <svg width="18" height="18" fill="currentColor" className="opacity-80">
+                <path d="M10 3l6 6H4l6-6zm-6 8h12l-6 6-6-6z" />
+              </svg>
+              Filter
+            </span>
+
+            <select
+              className="bg-neutral-800 border border-neutral-700 text-gray-300 rounded p-2"
+              value={rootFilter}
+              onChange={(e) => setRootFilter(e.target.value)}
+            >
+              <option value="all">All Roots</option>
+              {uniqueRoots.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </div>
+
+        </div>
+      </div>
+
 
       {/* Chord Grid */}
       {loading ? (

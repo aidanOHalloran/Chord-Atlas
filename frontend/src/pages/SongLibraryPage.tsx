@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import AddSongForm from "../components/Songs/AddSongForm/AddSongForm";
 import { useSearchbar } from "../hooks/useSearchbar";
 import SearchBar from "../components/GeneralUI/SearchBar/SearchBar";
+import { Mic, Music, GripHorizontal } from "lucide-react";
+
 
 export default function SongLibraryPage() {
   const [refresh, setRefresh] = useState(0);
@@ -76,62 +78,83 @@ export default function SongLibraryPage() {
         />
       </div>
 
-      {/* FILTER DROPDOWNS */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        {/* Artist */}
-        <select
-          value={filters.artist}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, artist: e.target.value }))
-          }
-          className="bg-neutral-900 border border-neutral-700 text-gray-300 rounded p-2"
+      {/* Filter Toolbar */}
+      <div className="mb-8 w-full flex justify-center">
+        <div
+          className="w-full max-w-3xl flex items-center justify-center gap-8
+               bg-neutral-900 border border-neutral-800 rounded-xl
+               px-6 py-4 shadow-md"
         >
-          <option value="">All Artists</option>
-          {filterData.artists.map((a) => (
-            <option key={a} value={a}>
-              {a}
-            </option>
-          ))}
-        </select>
+          {/* Artist */}
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 text-blue-400 whitespace-nowrap">
+              <Mic size={18} className="opacity-80" />
+              Artist
+            </span>
+            <select
+              className="bg-neutral-800 border border-neutral-700 text-gray-300 rounded p-2"
+              value={filters.artist}
+              onChange={(e) => setFilters((f) => ({ ...f, artist: e.target.value }))}
+            >
+              <option value="">All Artists</option>
+              {filterData.artists.map((a) => (
+                <option key={a}>{a}</option>
+              ))}
+            </select>
+          </div>
 
-        {/* Key */}
-        <select
-          value={filters.song_key}
-          onChange={(e) =>
-            setFilters((f) => ({ ...f, song_key: e.target.value }))
-          }
-          className="bg-neutral-900 border border-neutral-700 text-gray-300 rounded p-2"
-        >
-          <option value="">All Keys</option>
-          {filterData.song_keys.map((k) => (
-            <option key={k} value={k}>
-              {k}
-            </option>
-          ))}
-        </select>
+          {/* Separator */}
+          <div className="w-px h-8 bg-neutral-700 opacity-60"></div>
 
-        {/* Capo Fret */}
-        <select
-          value={filters.capo_fret == null ? "" : filters.capo_fret}
-          onChange={(e) =>
-            setFilters((f) => ({
-              ...f,
-              capo_fret:
-                e.target.value === ""      // "Any Capo"
-                  ? null                   // store null
-                  : Number(e.target.value) // convert "2" → 2
-            }))
-          }
-          className="bg-neutral-900 border border-neutral-700 text-gray-300 rounded p-2"
-        >
-          <option value="">Any Capo</option>
-          {filterData.capoFrets.map((fretNumber) => (
-            <option key={fretNumber} value={fretNumber == null ? "" : fretNumber}>
-              Capo Fret {fretNumber}
-            </option>
-          ))}
-        </select>
+          {/* Key */}
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 text-purple-400 whitespace-nowrap">
+              <Music size={18} className="opacity-80" />
+              Key
+            </span>
+            <select
+              className="bg-neutral-800 border border-neutral-700 text-gray-300 rounded p-2"
+              value={filters.song_key}
+              onChange={(e) => setFilters((f) => ({ ...f, song_key: e.target.value }))}
+            >
+              <option value="">All Keys</option>
+              {filterData.song_keys.map((k) => (
+                <option key={k}>{k}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Separator */}
+          <div className="w-px h-8 bg-neutral-700 opacity-60"></div>
+
+          {/* Capo */}
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 text-green-400 whitespace-nowrap">
+              <GripHorizontal size={18} className="opacity-80" />
+              Capo
+            </span>
+            <select
+              className="bg-neutral-800 border border-neutral-700 text-gray-300 rounded p-2"
+              value={filters.capo_fret ?? ""}
+              onChange={(e) =>
+                setFilters((f) => ({
+                  ...f,
+                  capo_fret: e.target.value === "" ? null : Number(e.target.value),
+                }))
+              }
+            >
+              <option value="">Any Capo</option>
+              {filterData.capoFrets.map((f) => (
+                <option key={f} value={f ?? ""}>
+                  Capo Fret {f}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
+
+
 
       {/* Song List */}
       <SongList refreshKey={refresh} filters={filters} onFilterData={setFilterData} />
