@@ -5,12 +5,16 @@ import AddChordForm from "../components/Chords/AddChordForm/AddChordForm";
 import ChordCard from "../components/Chords/ChordCard/ChordCard";
 import type { Chord } from "../types/models";
 import { Link } from "react-router-dom";
+import SearchBar from "../components/GeneralUI/SearchBar/SearchBar";
+import { useChordSearch } from "../hooks/useChordSearch";
 
 export default function ChordLibraryPage() {
   const [chords, setChords] = useState<Chord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+
+  const { searchTerm, handleChange } = useChordSearch();
 
   const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
@@ -45,6 +49,11 @@ export default function ChordLibraryPage() {
       console.error("❌ Failed to delete chord:", err);
     }
   };
+
+  // 🔍 Filter chords instantly based on search
+  const filteredChords = chords.filter((c) =>
+    c.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <motion.div
@@ -88,16 +97,26 @@ export default function ChordLibraryPage() {
         </div>
       </div>
 
+      {/* Search Bar */}
+      <div className="mb-6">
+        <SearchBar
+          onSubmit={(e) => e.preventDefault()}
+          value={searchTerm}
+          onChange={handleChange}
+          placeholder="Search chords by name..."
+        />
+      </div>
+
       {/* Chord Grid */}
       {loading ? (
         <p className="text-center text-gray-400">Loading chords...</p>
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
-      ) : chords.length === 0 ? (
+      ) : filteredChords.length === 0 ? (
         <p className="text-center text-gray-400">No chords yet. Add one above!</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {chords.map((chord) => (
+          {filteredChords.map((chord) => (
             <ChordCard key={chord.id} chord={chord} onDelete={handleDelete} />
           ))}
         </div>

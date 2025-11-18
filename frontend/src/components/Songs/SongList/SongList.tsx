@@ -79,7 +79,7 @@ export default function SongList({ refreshKey, filters, onFilterData }: SongList
     if (!loading && songs.length > 0 && onFilterData) {
       onFilterData({ artists, song_keys, capoFrets });
     }
-  }, [filteredSongs, loading]);
+  }, [songs, loading]);
 
 
   if (loading) {
