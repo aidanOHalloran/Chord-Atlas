@@ -3,10 +3,22 @@ import { useState } from "react";
 import SongList from "../components/Songs/SongList/SongList";
 import { Link } from "react-router-dom";
 import AddSongForm from "../components/Songs/AddSongForm/AddSongForm";
+import { useSearchbar } from "../hooks/useSearchbar";
+import SearchBar from "../components/GeneralUI/SearchBar/SearchBar";
 
 export default function SongLibraryPage() {
   const [refresh, setRefresh] = useState(0);
   const [showForm, setShowForm] = useState(false);
+
+  // vars for search bar (deconstructed from custom hook useSearchbar)
+  const { filters, setFilters, handleChange } = useSearchbar();
+
+  // hold dropdown data for filters
+  const [filterData, setFilterData] = useState({
+    artists: [] as string[],
+    song_keys: [] as string[],
+    capoFrets: [] as (number | null)[],
+  })
 
   return (
     <motion.div
@@ -41,8 +53,8 @@ export default function SongLibraryPage() {
 
         <div
           className={`transition-all duration-500 ease-in-out ${showForm
-              ? "max-h-[1200px] opacity-100 p-5 border-t border-neutral-800"
-              : "max-h-0 opacity-0"
+            ? "max-h-[1200px] opacity-100 p-5 border-t border-neutral-800"
+            : "max-h-0 opacity-0"
             } overflow-hidden`}
         >
           <AddSongForm
@@ -54,8 +66,75 @@ export default function SongLibraryPage() {
         </div>
       </div>
 
+      {/* Search */}
+      <div className="mb-6">
+        <SearchBar
+          onSubmit={(e) => e.preventDefault()}
+          value={filters.searchTerm ?? ""}
+          onChange={handleChange}
+          placeholder="Search songs by name..."
+        />
+      </div>
+
+      {/* FILTER DROPDOWNS */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        {/* Artist */}
+        <select
+          value={filters.artist}
+          onChange={(e) =>
+            setFilters((f) => ({ ...f, artist: e.target.value }))
+          }
+          className="bg-neutral-900 border border-neutral-700 text-gray-300 rounded p-2"
+        >
+          <option value="">All Artists</option>
+          {filterData.artists.map((a) => (
+            <option key={a} value={a}>
+              {a}
+            </option>
+          ))}
+        </select>
+
+        {/* Key */}
+        <select
+          value={filters.song_key}
+          onChange={(e) =>
+            setFilters((f) => ({ ...f, song_key: e.target.value }))
+          }
+          className="bg-neutral-900 border border-neutral-700 text-gray-300 rounded p-2"
+        >
+          <option value="">All Keys</option>
+          {filterData.song_keys.map((k) => (
+            <option key={k} value={k}>
+              {k}
+            </option>
+          ))}
+        </select>
+
+        {/* Capo Fret */}
+        <select
+          value={filters.capo_fret == null ? "" : filters.capo_fret}
+          onChange={(e) =>
+            setFilters((f) => ({
+              ...f,
+              capo_fret:
+                e.target.value === ""      // "Any Capo"
+                  ? null                   // store null
+                  : Number(e.target.value) // convert "2" → 2
+            }))
+          }
+          className="bg-neutral-900 border border-neutral-700 text-gray-300 rounded p-2"
+        >
+          <option value="">Any Capo</option>
+          {filterData.capoFrets.map((fretNumber) => (
+            <option key={fretNumber} value={fretNumber == null ? "" : fretNumber}>
+              Capo Fret {fretNumber}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {/* Song List */}
-      <SongList key={refresh} />
+      <SongList refreshKey={refresh} filters={filters} onFilterData={setFilterData} />
     </motion.div>
   );
 }

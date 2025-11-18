@@ -2,13 +2,21 @@ import { useEffect, useState } from "react";
 import { SongService } from "../../../services/api";
 import SongItem from "../SongItem/SongItem";
 import type { Song } from "../../../types/models";
+import type { SongFilters } from "../../../types/filters";
 import toast from "react-hot-toast";
+
 
 interface SongListProps {
   refreshKey?: number; // ✅ triggers re-fetch when incremented
+  filters: SongFilters;
+  onFilterData?: (data: {
+    artists: string[];
+    song_keys: string[];
+    capoFrets: (number | null)[];
+  }) => void;
 }
 
-export default function SongList({ refreshKey }: SongListProps) {
+export default function SongList({ refreshKey, filters, onFilterData }: SongListProps) {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,8 +30,6 @@ export default function SongList({ refreshKey }: SongListProps) {
         setError("");
 
         const res = await SongService.getAll();
-        // console.log("🎵 SongService response:", res);
-
         setSongs(res);
 
         // ✅ Show toast when songs successfully refresh (only on re-fetch)
@@ -43,23 +49,56 @@ export default function SongList({ refreshKey }: SongListProps) {
   }, [refreshKey]);
   // ✅ refresh list when parent form adds a new song
 
-    if (loading) {
-      return <p className="text-gray-400 animate-pulse">Loading songs...</p>;
-    }
 
-    if (error) {
-      return <p className="text-red-400">{error}</p>;
-    }
+  // Apply filters to the songs list
+  // Filtering logic
+  const filteredSongs = songs.filter((song) => {
+    const { searchTerm, artist, song_key, capo_fret } = filters;
 
-    if (songs.length === 0) {
-      return <p className="text-gray-400">No songs found.</p>;
-    }
+    const matchesText =
+      !searchTerm ||
+      song.title.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return (
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {songs.map((song) => (
-          <SongItem key={song.id} song={song} />
-        ))}
-      </div>
-    );
+    const matchesArtist = !artist || song.artist === artist;
+
+    const matchesKey = !song_key || song.song_key === song_key;
+
+    const matchesCapo =
+      capo_fret === null ? true : song.capo_fret === capo_fret;
+
+    return matchesText && matchesArtist && matchesKey && matchesCapo;
+  });
+
+  // Extract the unique filter options from the songs data, for the dropdowns
+  const artists = Array.from(new Set(filteredSongs.map((song) => song.artist).filter(Boolean))).sort();
+  const song_keys = Array.from(new Set(filteredSongs.map((song) => song.song_key).filter(Boolean))).sort();
+  const capoFrets = Array.from(new Set(filteredSongs.map((song) => song.capo_fret))).sort((a, b) => (a === null ? 1 : b === null ? -1 : a - b));
+
+  // Pass the filter options back to the parent component
+  useEffect(() => {
+    if (!loading && songs.length > 0 && onFilterData) {
+      onFilterData({ artists, song_keys, capoFrets });
+    }
+  }, [filteredSongs, loading]);
+
+
+  if (loading) {
+    return <p className="text-gray-400 animate-pulse">Loading songs...</p>;
   }
+
+  if (error) {
+    return <p className="text-red-400">{error}</p>;
+  }
+
+  if (songs.length === 0) {
+    return <p className="text-gray-400">No songs found.</p>;
+  }
+
+  return (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {filteredSongs.map((song) => (
+        <SongItem key={song.id} song={song} />
+      ))}
+    </div>
+  );
+}
