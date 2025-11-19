@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Chord } from '../../../types/models'
 
 const ChordProgressionOrderLabel = ({ chords = [] as Chord[] }) => {

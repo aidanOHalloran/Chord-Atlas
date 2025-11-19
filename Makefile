@@ -97,13 +97,26 @@ build-images:
 	@echo "📦 Building backend and frontend images..."
 	docker build -t $(REGISTRY)-backend:$(TAG) ./backend
 	docker build -t $(REGISTRY)-frontend:$(TAG) ./frontend
-	@echo "✅ Build complete: $(REGISTRY)-backend:$(TAG) and $(REGISTRY)-frontend:$(TAG)"
+
+	@echo "🔖 Tagging images as latest..."
+	docker tag $(REGISTRY)-backend:$(TAG) $(REGISTRY)-backend:latest
+	docker tag $(REGISTRY)-frontend:$(TAG) $(REGISTRY)-frontend:latest
+
+	@echo "✅ Build complete: $(REGISTRY)-backend:$(TAG), $(REGISTRY)-frontend:$(TAG)"
+	@echo "   Also tagged as: latest"
 
 push-images:
-	@echo "🚀 Pushing images to Docker Hub..."
+	@echo "🚀 Pushing versioned images..."
 	docker push $(REGISTRY)-backend:$(TAG)
 	docker push $(REGISTRY)-frontend:$(TAG)
-	@echo "✅ Push complete: all images pushed with tag $(TAG)"
+
+	@echo "🚀 Pushing latest tags..."
+	docker push $(REGISTRY)-backend:latest
+	docker push $(REGISTRY)-frontend:latest
+
+	@echo "✅ Push complete: pushed $(TAG) and latest"
 
 release: build-images push-images
-	@echo "🎉 Release complete → $(REGISTRY)-backend:$(TAG), $(REGISTRY)-frontend:$(TAG)"
+	@echo "🎉 Release complete!"
+	@echo "   → $(REGISTRY)-backend:$(TAG), $(REGISTRY)-backend:latest"
+	@echo "   → $(REGISTRY)-frontend:$(TAG), $(REGISTRY)-frontend:latest"
