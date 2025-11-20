@@ -73,6 +73,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - default
 
   frontend:
     # This image will be pushed to Docker Hub
@@ -83,6 +85,9 @@ services:
       - "8080:80"
     depends_on:
       - backend
+    networks:
+      - default
+
 
   adminer:
     image: adminer:latest
@@ -94,6 +99,8 @@ services:
       ADMINER_DEFAULT_SERVER: db
     depends_on:
       - db
+    networks:
+      - default
 
 volumes:
   db_data:
