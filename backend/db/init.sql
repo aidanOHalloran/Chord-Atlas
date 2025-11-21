@@ -1,27 +1,23 @@
 -- =====================================================================
--- CHORD ATLAS: INITIAL DATABASE SEED (with chord timeline support)
+-- CHORD ATLAS: INITIAL DATABASE SEED (Docker entrypoint version)
 -- =====================================================================
 
-CREATE DATABASE IF NOT EXISTS chordatlas;
-USE chordatlas;
-
--- ---------------------------------------------------------------------
--- DROP & RECREATE TABLES
--- ---------------------------------------------------------------------
+-- Docker entrypoint already created the `chordatlas` database based on
+-- MYSQL_DATABASE, and runs this script with that DB selected.
+-- So we do NOT create/use the database here.
 
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS chord_timeline;
+DROP TABLE IF EXISTS song_chord_progressions;
 DROP TABLE IF EXISTS song_chords;
 DROP TABLE IF EXISTS chords;
 DROP TABLE IF EXISTS songs;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- ---------------------------------------------------------------------
 -- SONGS TABLE
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS songs (
+CREATE TABLE songs (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   artist VARCHAR(255) NOT NULL,
@@ -30,13 +26,11 @@ CREATE TABLE IF NOT EXISTS songs (
   notes TEXT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  spotify_uri VARCHAR(100);
+  spotify_uri VARCHAR(100)
 );
 
--- ---------------------------------------------------------------------
 -- CHORDS TABLE
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS chords (
+CREATE TABLE chords (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(50) NOT NULL UNIQUE,
   frets JSON,
@@ -46,10 +40,8 @@ CREATE TABLE IF NOT EXISTS chords (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ---------------------------------------------------------------------
 -- SONG_CHORDS (link table)
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS song_chords (
+CREATE TABLE song_chords (
   id INT AUTO_INCREMENT PRIMARY KEY,
   song_id INT NOT NULL,
   chord_id INT NOT NULL,
@@ -58,29 +50,24 @@ CREATE TABLE IF NOT EXISTS song_chords (
   FOREIGN KEY (chord_id) REFERENCES chords(id) ON DELETE CASCADE
 );
 
-
--- ---------------------------------------------------------------------
 -- SONG_CHORD_PROGRESSIONS
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS song_chord_progressions (
+CREATE TABLE song_chord_progressions (
   id INT AUTO_INCREMENT PRIMARY KEY,
   song_id INT NOT NULL,
   progression_name VARCHAR(100) NOT NULL,
-  chord_ids JSON NOT NULL,     -- just array of chord IDs in order
+  chord_ids JSON NOT NULL,
   order_index INT DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
 );
 
--- ---------------------------------------------------------------------
 -- CHORD_TIMELINE
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS chord_timeline (
+CREATE TABLE chord_timeline (
   id INT AUTO_INCREMENT PRIMARY KEY,
   song_id INT NOT NULL,
   chord_name VARCHAR(10) NOT NULL,
-  start_time DECIMAL(6,2) NOT NULL, -- in seconds, from start of song
-  end_time DECIMAL(6,2) NOT NULL, -- in seconds, from start of song
+  start_time DECIMAL(6,2) NOT NULL,
+  end_time DECIMAL(6,2) NOT NULL,
   FOREIGN KEY (song_id) REFERENCES songs(id) ON DELETE CASCADE
 );
 
@@ -88,7 +75,7 @@ CREATE TABLE IF NOT EXISTS chord_timeline (
 -- SEED DATA
 -- ---------------------------------------------------------------------
 
--- CHORDS ---------------------------------------------------------------
+-- CHORDS
 INSERT INTO chords (name, frets, fingers, position, variation)
 VALUES
 ('C',  JSON_ARRAY(0,3,2,0,1,0),   JSON_ARRAY(0,3,2,0,3,0),   1, 1),
@@ -104,7 +91,7 @@ VALUES
 ('A7sus4', JSON_ARRAY(0,0,2,0,3,0), JSON_ARRAY(0,0,2,0,3,0), 1, 1),
 ('F#m', JSON_ARRAY(2,4,4,2,2,2), JSON_ARRAY(1,3,4,1,1,1), 2, 1);
 
--- SONGS ---------------------------------------------------------------
+-- SONGS
 INSERT INTO songs (title, artist, capo_fret, song_key, notes, spotify_uri)
 VALUES
 ('Wonderwall', 'Oasis', 2, 'Em', 'Classic 90s acoustic progression: Em-G-D-A7sus4', 'spotify:track:1qPbGZqppFwLwcBC1JQ6Vr'),
@@ -113,17 +100,16 @@ VALUES
 ('Tennessee Whiskey', 'Chris Stapleton', 2, 'A', 'Two-chord soul groove: A-Bm (G-shape with capo 2)', 'spotify:track:3fqwjXwUGN6vbzIwvyFMhx'),
 ('Hallelujah', 'Leonard Cohen', 0, 'C', 'Gentle arpeggiated pattern: C-Am-F-G-C', 'spotify:track:7yzbimr8WVyAtBX3Eg6UL9');
 
-
--- SONG_CHORDS ---------------------------------------------------------
+-- SONG_CHORDS
 INSERT INTO song_chords (song_id, chord_id, position)
 VALUES
--- Wonderwall (Em–G–D–A7sus4)
+-- Wonderwall
 (1, (SELECT id FROM chords WHERE name='Em'), 1),
 (1, (SELECT id FROM chords WHERE name='G'), 2),
 (1, (SELECT id FROM chords WHERE name='D'), 3),
 (1, (SELECT id FROM chords WHERE name='A7sus4'), 4),
 
--- Hotel California (Bm–F#m–A–E–G–D–Em–F#m)
+-- Hotel California
 (2, (SELECT id FROM chords WHERE name='Bm'), 1),
 (2, (SELECT id FROM chords WHERE name='F#m'), 2),
 (2, (SELECT id FROM chords WHERE name='A'), 3),
@@ -133,58 +119,47 @@ VALUES
 (2, (SELECT id FROM chords WHERE name='Em'), 7),
 (2, (SELECT id FROM chords WHERE name='F#m'), 8),
 
--- Let It Be (C–G–Am–F)
+-- Let It Be
 (3, (SELECT id FROM chords WHERE name='C'), 1),
 (3, (SELECT id FROM chords WHERE name='G'), 2),
 (3, (SELECT id FROM chords WHERE name='Am'), 3),
 (3, (SELECT id FROM chords WHERE name='F'), 4),
 
--- Tennessee Whiskey (A–Bm)
+-- Tennessee Whiskey
 (4, (SELECT id FROM chords WHERE name='A'), 1),
 (4, (SELECT id FROM chords WHERE name='Bm'), 2),
 
--- Hallelujah (C–Am–F–G–C)
+-- Hallelujah
 (5, (SELECT id FROM chords WHERE name='C'), 1),
 (5, (SELECT id FROM chords WHERE name='Am'), 2),
 (5, (SELECT id FROM chords WHERE name='F'), 3),
 (5, (SELECT id FROM chords WHERE name='G'), 4),
 (5, (SELECT id FROM chords WHERE name='C'), 5);
 
-
--- SONG_CHORD_PROGRESSIONS ----------------------------------------------
+-- SONG_CHORD_PROGRESSIONS
 INSERT INTO song_chord_progressions (song_id, progression_name, chord_ids, order_index)
 VALUES
--- WONDERWALL (Oasis)
 (1, 'Intro', JSON_ARRAY(9, 2, 3, 11), 1),
 (1, 'Verse', JSON_ARRAY(9, 2, 3, 11), 2),
-(1, 'Chorus', JSON_ARRAY(9, 2, 3, 11, 6), 3), -- sometimes adds F on last pass
+(1, 'Chorus', JSON_ARRAY(9, 2, 3, 11, 6), 3),
 (1, 'Bridge', JSON_ARRAY(3, 9, 2, 11), 4),
 
--- HOTEL CALIFORNIA (Eagles)
 (2, 'Intro', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 1),
 (2, 'Verse', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 2),
 (2, 'Chorus', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 3),
 (2, 'Solo', JSON_ARRAY(7, 12, 4, 5, 2, 3, 9, 12), 4),
 
--- LET IT BE (The Beatles)
 (3, 'Intro', JSON_ARRAY(1, 2, 10, 6), 1),
 (3, 'Verse', JSON_ARRAY(1, 2, 10, 6), 2),
 (3, 'Chorus', JSON_ARRAY(1, 2, 10, 6, 1), 3),
 (3, 'Bridge', JSON_ARRAY(5, 6, 1, 2), 4),
 
--- TENNESSEE WHISKEY (Chris Stapleton)
 (4, 'Intro', JSON_ARRAY(4, 7), 1),
 (4, 'Verse', JSON_ARRAY(4, 7), 2),
 (4, 'Chorus', JSON_ARRAY(4, 7), 3),
 (4, 'Outro', JSON_ARRAY(4, 7), 4),
 
--- HALLELUJAH (Leonard Cohen)
 (5, 'Intro', JSON_ARRAY(1, 10, 6, 2, 1), 1),
 (5, 'Verse', JSON_ARRAY(1, 10, 6, 2, 1), 2),
 (5, 'Refrain', JSON_ARRAY(1, 10, 6, 2, 1), 3),
 (5, 'Outro', JSON_ARRAY(1, 10, 6, 2, 1), 4);
-
-
--- =====================================================================
--- END OF SEED FILE
--- =====================================================================
