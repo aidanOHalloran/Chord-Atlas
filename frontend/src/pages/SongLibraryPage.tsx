@@ -6,11 +6,15 @@ import AddSongForm from "../components/Songs/AddSongForm/AddSongForm";
 import { useSearchbar } from "../hooks/useSearchbar";
 import SearchBar from "../components/GeneralUI/SearchBar/SearchBar";
 import { Mic, Music, GripHorizontal } from "lucide-react";
+import ConfirmDeleteModal from "../components/GeneralUI/Modals/ConfirmDeleteModal/ConfirmDeleteModal";
+import { SongService } from "../services/api";
 
 
 export default function SongLibraryPage() {
   const [refresh, setRefresh] = useState(0);
   const [showForm, setShowForm] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+
 
   // vars for search bar (deconstructed from custom hook useSearchbar)
   const { filters, setFilters, handleChange } = useSearchbar();
@@ -157,7 +161,22 @@ export default function SongLibraryPage() {
 
 
       {/* Song List */}
-      <SongList refreshKey={refresh} filters={filters} onFilterData={setFilterData} />
+      <SongList refreshKey={refresh} filters={filters} onFilterData={setFilterData} onRequestDelete={(id) => setPendingDeleteId(id)} />
+
+      <ConfirmDeleteModal
+        isOpen={pendingDeleteId !== null}
+        title="Delete Song"
+        message="Are you sure you want to delete this song? This action cannot be undone."
+        onCancel={() => setPendingDeleteId(null)}
+        onConfirm={async () => {
+          if (pendingDeleteId !== null) {
+                await SongService.delete(pendingDeleteId);
+                setRefresh((r) => r + 1); // re-fetch the list
+          }
+          setPendingDeleteId(null);
+        }}
+      />
+
     </motion.div>
   );
 }

@@ -14,9 +14,11 @@ interface SongListProps {
     song_keys: string[];
     capoFrets: (number | null)[];
   }) => void;
+
+  onRequestDelete?: (id: number) => void;
 }
 
-export default function SongList({ refreshKey, filters, onFilterData }: SongListProps) {
+export default function SongList({ refreshKey, filters, onFilterData, onRequestDelete }: SongListProps) {
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -97,7 +99,7 @@ export default function SongList({ refreshKey, filters, onFilterData }: SongList
   return (
     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {filteredSongs.map((song) => (
-        <SongItem key={song.id} song={song} />
+        <SongItem key={song.id} song={song} onRequestDelete={onRequestDelete} />
       ))}
     </div>
   );

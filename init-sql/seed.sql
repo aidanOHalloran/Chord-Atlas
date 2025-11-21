@@ -97,8 +97,7 @@ VALUES
 ('Wonderwall', 'Oasis', 2, 'Em', 'Classic 90s acoustic progression: Em-G-D-A7sus4', 'spotify:track:1qPbGZqppFwLwcBC1JQ6Vr'),
 ('Hotel California', 'Eagles', 0, 'Bm', 'Iconic intro: Bm-F#-A-E-G-D-Em-F#', 'spotify:track:40riOy7x9W7GXjyGp4pjAv'),
 ('Let It Be', 'The Beatles', 0, 'C', 'Simple piano/guitar sequence: C-G-Am-F', 'spotify:track:7iN1s7xHE4ifF5povM6A48'),
-('Tennessee Whiskey', 'Chris Stapleton', 2, 'A', 'Two-chord soul groove: A-Bm (G-shape with capo 2)', 'spotify:track:3fqwjXwUGN6vbzIwvyFMhx'),
-('Hallelujah', 'Leonard Cohen', 0, 'C', 'Gentle arpeggiated pattern: C-Am-F-G-C', 'spotify:track:7yzbimr8WVyAtBX3Eg6UL9');
+('Tennessee Whiskey', 'Chris Stapleton', 2, 'A', 'Two-chord soul groove: A-Bm (G-shape with capo 2)', 'spotify:track:3fqwjXwUGN6vbzIwvyFMhx');
 
 -- SONG_CHORDS
 INSERT INTO song_chords (song_id, chord_id, position)
@@ -129,12 +128,6 @@ VALUES
 (4, (SELECT id FROM chords WHERE name='A'), 1),
 (4, (SELECT id FROM chords WHERE name='Bm'), 2),
 
--- Hallelujah
-(5, (SELECT id FROM chords WHERE name='C'), 1),
-(5, (SELECT id FROM chords WHERE name='Am'), 2),
-(5, (SELECT id FROM chords WHERE name='F'), 3),
-(5, (SELECT id FROM chords WHERE name='G'), 4),
-(5, (SELECT id FROM chords WHERE name='C'), 5);
 
 -- SONG_CHORD_PROGRESSIONS
 INSERT INTO song_chord_progressions (song_id, progression_name, chord_ids, order_index)
@@ -158,8 +151,3 @@ VALUES
 (4, 'Verse', JSON_ARRAY(4, 7), 2),
 (4, 'Chorus', JSON_ARRAY(4, 7), 3),
 (4, 'Outro', JSON_ARRAY(4, 7), 4),
-
-(5, 'Intro', JSON_ARRAY(1, 10, 6, 2, 1), 1),
-(5, 'Verse', JSON_ARRAY(1, 10, 6, 2, 1), 2),
-(5, 'Refrain', JSON_ARRAY(1, 10, 6, 2, 1), 3),
-(5, 'Outro', JSON_ARRAY(1, 10, 6, 2, 1), 4);

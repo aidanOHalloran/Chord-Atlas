@@ -22,8 +22,8 @@ export const getAllChords = async (_: Request, res: Response) => {
       attributes: ["id", "name", "frets", "fingers"],
     });
 
-     // Convert Sequelize models → plain objects & parse JSON safely
-    const parsed = chords.map(chord => {
+    // Convert Sequelize models → plain objects & parse JSON safely
+    const parsed = chords.map((chord) => {
       const plain = chord.get({ plain: true });
       return {
         ...plain,
@@ -93,6 +93,26 @@ export const createChord = async (req: Request, res: Response) => {
   }
 };
 
+// DELETE CHORD
+export const deleteChord = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const deleted = await Chord.destroy({
+      where: { id },
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Chord not found" });
+    }
+
+    return res.status(200).json({ message: "Chord deleted" });
+  } catch (err) {
+    console.error("[DELETE CHORD ERROR]", err);
+    return res.status(500).json({ message: "Failed to delete chord" });
+  }
+};
+
 /*
  * @desc Get chord timeline for a song
  * @route GET /api/chords/:songId/timeline
@@ -112,7 +132,9 @@ export const getChordsTimelines = async (req: Request, res: Response) => {
     });
 
     if (!timeline.length) {
-      return res.status(404).json({ message: "No chord timeline found for this song" });
+      return res
+        .status(404)
+        .json({ message: "No chord timeline found for this song" });
     }
 
     res.json(timeline);

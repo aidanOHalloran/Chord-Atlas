@@ -1,6 +1,7 @@
 import type { Chord } from "../../../types/models";
 import { allTunings, getStringTooltips } from "../../../static/guitarTunings";
 import { Link } from "react-router-dom";
+import { Trash2 } from "lucide-react";
 
 interface Props {
   chord: Chord;
@@ -37,10 +38,10 @@ export default function({ chord, onDelete }: Props) {
             e.preventDefault();
             onDelete(chord.id);
           }}
-          className="w-6 h-6 flex items-center justify-center rounded-full bg-red-600/20 text-red-400 hover:bg-red-600/40 hover:text-white transition"
+          className="text-red-400 hover:text-red-300 transition background-transparent p-1 rounded-full"
           title="Delete chord"
         >
-          ✕
+          <Trash2 size={20} color="#0d0003ff" />
         </button>
 
       </div>

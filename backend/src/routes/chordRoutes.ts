@@ -1,5 +1,5 @@
 import express from "express";
-import { getAllChords, createChord, getChordById, getChordsTimelines } from "../controllers/chordController";
+import { getAllChords, createChord, getChordById, getChordsTimelines, deleteChord } from "../controllers/chordController";
 import { getTimelineBySongId } from "../controllers/chordTimelineController";
 
 const router = express.Router();
@@ -12,6 +12,9 @@ router.get("/:id", getChordById);
 
 // ✅ POST /api/chords — create a new chord
 router.post("/", createChord);
+
+// DELETE /api/chords/:id — delete a chord by ID
+router.delete("/:id", deleteChord);
 
 router.get("/:songId/timeline", getTimelineBySongId);
 
